@@ -1,0 +1,29 @@
+<ion-view cache-view="false">
+<ion-header-bar>
+   <label class="item item-input" id="search">
+    <i class="fa fa-search placeholder-icon"></i>
+    <input type="text" placeholder="Хайх утгаа оруулна уу" ng-model="search">
+  </label>
+    <button class="button button-clear button-dark"  ng-click="clear()" ng-show="search.length" id="clearButton"><i class="icon ion-ios-close-outline"></i></button>
+</ion-header-bar>
+
+<ion-content>
+<div class="list" id="searchList" ng-repeat="ticket in searchTickets | filter: search ">
+     		<a class="item item-avatar">
+     		<img src="img/default.png">
+     		<h2>{{ticket.ticket_fullname}}</h2>
+     		<p>{{ticket.ticket_phonenumber}}</p>
+     			<button class="button button-icon" ng-if="ticket.ticket_isUsed == false" ng-click="show($event,ticket.id)">
+     			<i class="icon ion-android-more-vertical"></i>
+           </button>
+            <button class="button button-icon" style="color:red" ng-if="ticket.ticket_isUsed == true" >
+          <i class="icon ion-android-checkmark-circle"></i>
+           </button>
+     		</a>
+
+</div>
+  <div class="list card" ng-if="searchTickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Тасалбар алга байна.
+        </div>
+</ion-content>
+</ion-view>

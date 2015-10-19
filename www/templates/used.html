@@ -1,0 +1,31 @@
+ <ion-view view-title="Ашиглагдсан" cache-view="false">
+ <ion-nav-bar class="bar-positive">
+       <ion-nav-back-button>
+       	 Буцах
+       </ion-nav-back-button>
+       <ion-nav-buttons side="right" >
+    		<span id="usedcount">{{used_counter}} ширхэг</span>
+    </ion-nav-buttons>
+    </ion-nav-bar> 
+    <ion-content>
+   <ion-refresher
+    on-refresh="doRefresh()">
+  </ion-refresher>
+        <div ng-repeat="ticket in usedTickets">
+          <span id="used" ng-show="ticket.ticket_isUsed == true"><p>Ашиглагдсан</p></span>
+     <ion-checkbox class="checkbox-positive" id="check" ng-checked="ticket.ticket_isUsed" ng-model="ticket.ticket_isUsed" ng-click="isChecked(ticket)">
+      <a class="item" id="profile" >
+      <img src="img/default.png" >
+      <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
+      <p>{{ticket.ticket_user.person_email}}</p>
+      <p>{{ticket.ticket_countof}} ширхэг</p>
+    </a>
+
+    </ion-checkbox>
+
+    </div>
+        <div class="list card" ng-if="usedTickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Тасалбар алга байна.
+        </div>
+    </ion-content>
+</ion-view>

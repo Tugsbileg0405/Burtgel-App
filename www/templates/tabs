@@ -1,0 +1,11 @@
+        <ion-tabs class="tabs-top">
+          <ion-tab title="Нийт" ui-sref="tab.ticket.tab1">
+            <ion-nav-view name="tab1"></ion-nav-view>
+          </ion-tab>
+          <ion-tab title="Ашиглагдсан" ui-sref="tab.ticket.tab2">
+            <ion-nav-view name="tab2"></ion-nav-view>
+          </ion-tab>
+             <ion-tab title="Ашиглагдсан" ui-sref="tab.ticket.tab2">
+            <ion-nav-view name="tab2"></ion-nav-view>
+          </ion-tab>
+    </ion-tabs>

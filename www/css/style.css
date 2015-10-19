@@ -1,0 +1,241 @@
+
+#eventTitle{
+	font-weight: bold;
+	font-size: 16px;
+}
+.eventText {
+	font-size: 16px;
+	color:#f8f8f8;
+}
+
+#profile {
+	border:none;
+	padding: 5px 0 5px 10px;
+	margin: 0px;
+}
+#profile img {
+	border-radius: 100%;
+	width: 50px;
+	height: 50px;
+	float: left;
+	margin-right: 25px;
+	margin-top: 5px;
+}
+#profile h2 {
+	font-size: 16px;
+	height: 20px;
+	text-align: left;
+}
+#profile p {
+	font-size: 14px;
+	text-align: left;
+}
+#check {
+	margin-top: 0px;
+	padding-top:5px;
+	color: #FF5700;
+	padding-bottom: 5px;
+}
+.col {
+	border:none;
+}
+#loginForm {
+	border:none;
+}
+.line-center{
+    margin:0;padding:0 10px;
+    background:#fff;
+    display:inline-block;
+}
+#or{
+    text-align:center;
+    position:relative;
+    z-index:2;
+}
+#or:after{
+    content:"";
+    position:absolute;
+    top:50%;
+    left:0;
+    right:0;
+    border-top:solid 1px #D0D0D0;
+    z-index:-1;
+}
+#used {
+	position: absolute;
+	z-index: 100;
+	width: 100%;
+	height: 84px;
+	background-color: rgba(0,0,0,0.05);
+	color: white;
+
+}
+#used p{
+	position: absolute;
+	bottom: 10px;
+	z-index: 100;
+	padding: 5px;
+	background-color: rgba(255,0,0,0.7);
+	color: white;
+	right: 0;
+}
+
+#usedBack{
+	background-color:black;
+	border: 1px solid;
+	width: 50px;
+}
+#ticketInfo {
+	padding: 0;
+	width: 360px;
+}
+#ticketInfo .item {
+	border: none;
+}
+#ticketInfo input {
+	overflow: auto;
+	border-bottom:1px solid green;
+}
+#ticketInfo .input-label {
+	width: 150px;
+	font-size: 15px;
+	margin-left: 0px;
+}
+#ticketInfo h2 {
+	font-size: 19px;
+	text-align: center;
+	font-weight: bold;
+	color: green;
+	padding: 5px 0 10px 0;
+}
+#info {
+	font-size: 18px;
+	color: red;
+}
+.platform-android .bar-subheader.has-tabs-top{
+top:93px;
+}
+
+.platform-android .has-subheader.has-tabs-top{
+top:137px;
+}
+
+#search {
+	border: none;
+	width: 100%;
+}
+#search input {
+	font-size: 17px;
+	padding-top: 5px;
+	padding-left: 10px;
+}
+#clearButton {
+	border: none;
+	margin-right: 10px;
+}
+#searchList {
+	margin-bottom: 0;
+}
+#searchList h2{
+	padding-bottom: 2px;
+}
+#searchList button {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+ion-popover-view.fit {
+  height: auto !important;
+}
+
+ion-popover-view.fit ion-content {
+  position: relative !important;
+}
+
+.platform-android ion-popover-view.fit {
+  margin-top: 10px !important;
+}
+.popup-body {
+	text-align: center;
+	font-size: 16px;
+}
+#myEvent img{
+	border-radius: 100%;
+}
+.eventText i {
+	font-size:20px;
+}
+#scanData i {
+	font-size: 25px;
+}
+#proInfo input {
+	text-align: right;
+	border-bottom: 1px solid orange ;
+}
+#proInfo label{
+	border: none;
+}
+.image-loader-container {
+  margin: 9px;
+  max-width: 81px;
+  border-radius: 50%;
+  max-height: 81px;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: #e5e5e5;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: stretch;
+  align-items: center;
+}
+a:active{
+	background-color: white;
+}
+.tabsdemoDynamicHeight md-content {
+  background-color: transparent !important; }
+  .tabsdemoDynamicHeight md-content md-tabs {
+    background: #f6f6f6;
+    border: 1px solid #e1e1e1; }
+    .tabsdemoDynamicHeight md-content md-tabs md-tabs-wrapper {
+      background: white; }
+  .tabsdemoDynamicHeight md-content h1:first-child {
+    margin-top: 0; }
+#subInfo{
+	padding-left: 15px;
+	font-size: 15px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+#subInfo span {
+	position: absolute;
+	right: 20px;
+}
+#usedcount {
+	padding: 5px 10px 0px 10px;
+	font-size: 18px;
+}
+.profile-picture {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  padding: 3px;
+  border-radius: 100%;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  margin-left: 35%;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  position: absolute;
+  top: 10%;
+  left: 5%;
+}
+.profile-picture img {
+  width: 80px;
+  height:80px;
+  border-radius: 100%;
+}

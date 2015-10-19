@@ -1,0 +1,23 @@
+<ion-view view-title="Арга хэмжээ">
+   <ion-nav-bar class="bar-positive">
+    </ion-nav-bar>
+  <ion-content lazy-scroll>
+   <ion-refresher
+    on-refresh="doRefresh()">
+  </ion-refresher>
+        <div ng-repeat="event in events">
+          <div class="list">
+		    <a class="item item-thumbnail-left" id="myEvent" href="#/tab/dash/{{event.id}}">
+		      <img image-lazy-src="{{backSite}}/{{event.event_cover}}" image-lazy-loader="android">
+		      <h2 id="eventTitle">{{event.event_title}}</h2>
+		      <p class="eventText"><i class="icon ion-ios-clock-outline"></i> {{event.event_start_date | date:'medium'}}</p>
+		      <p class="eventText"><i class="icon ion-ios-location-outline"></i> {{event.event_location}}</p>
+		    </a>
+		</div>
+        </div>
+          <div class="list card" ng-if="tickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Хоосон байна.
+        </div>
+  </ion-content>
+  
+</ion-view>
