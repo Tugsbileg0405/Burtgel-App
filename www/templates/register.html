@@ -1,0 +1,62 @@
+<ion-view view-title="Бүртгүүлэх" cache-view="false">
+<ion-nav-bar class="bar custom-color">
+     <ion-nav-buttons side="left">
+      <button class="button button-clear" ui-sref="login" style="color:white">
+        <i class="icon ion-ios-arrow-back" style="padding:0 5px 0 5px"></i>
+        Буцах
+      </button>
+    </ion-nav-buttons>
+    </ion-nav-bar>
+  <ion-content>
+  <ion-item>
+   <div class="row">
+          <div class="col"></div>
+          <div class="col col-50"  ng-click="show($event)" style="text-align:center;border-radius:100%" >
+                    <img ng-src="{{pictureURL}}" style="width:80px;height:80px;border-radius:100%">
+          </div>
+          <div class="col"></div>
+      </div>
+      <div class="list">
+        <form name="myForm" id="register">
+         <label class="item item-input item-floating-label">
+              <span class="input-label">Овог:</span>
+              <input type="text" name="lastname" placeholder="Овог" ng-model="reg.uname" required>
+             </span>
+          </label>
+          <label class="item item-input item-floating-label">
+              <span class="input-label">Нэр:</span>
+              <input type="text" name="lastname" placeholder="Нэр" ng-model="reg.fname" required>
+             </span>
+          </label>
+              <label class="item item-input item-floating-label" >
+            <span class="input-label">Утасны дугаар:</span>
+              <input type="text" placeholder="Утасны дугаар" ng-model="reg.phone">
+          </label>
+            <label class="item item-input item-floating-label">
+              <span class="input-label">И-мэйл:</span>
+              <input type="email" name="email" placeholder="И-мэйл" ng-model="reg.email" required>
+          </label>
+          <label class="item item-input item-floating-label">
+              <span class="input-label">Нууц үг:</span>
+              <input type="password" name="password" ng-minlength="6" placeholder="Нууц үг" ng-model="reg.pass">
+          </label>
+           <label class="item item-input item-floating-label"  >
+              <span class="input-label">Нууц үг давтах:</span>
+              <input type="password"  placeholder="Нууц үг давтах:" ng-model="reg.newpass_verify" name="confirm_password" data-nx-equal-ex="reg.pass" required>
+          </label>
+             <span class="error" style="padding:0 0 10px 16px;font-size:14px;color:red;margin-bottom:10px"  ng-show="myForm.password.$error.minlength">
+             * Хэт богино байна.
+          </span>
+                <span style="padding:0 0 10px 16px;font-size:14px;color:red;margin-bottom:10px" ng-show="myForm.confirm_password.$error.nxEqualEx">
+             * Нууц үг тохирохгүй байна.</span>
+          <br>
+          <br>
+            <button ng-disabled="myForm.$invalid"  style="background-color:#289BB8;color:white;border-radius:5px;width:100%;padding-top:10px;padding-bottom:10px;border:1px solid #289BB8" ng-click="Register(reg)" type="submit" >
+                    Бүртгүүлэх
+            </button>
+            </form>
+      </div>
+
+    </ion-item>
+  </ion-content>
+</ion-view>

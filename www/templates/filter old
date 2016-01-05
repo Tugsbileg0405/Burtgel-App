@@ -1,0 +1,48 @@
+  <ion-popover-view class="fit" >
+        <ion-content>
+          <div class="list" ng-click="hidePop($event)">
+        <label class="item item-input item-select">
+          <div class="input-label">
+         Тасалбар төрөл:
+    </div>
+    <select ng-model="data.ticketType"  ng-change="sortTicket(data)">
+      <option value="">Cонгоно уу</option>
+        <option value="Free">Үнэгүй</option>
+      <option value="Paid" >Үнэтэй</option>
+         <option value="Urilga" >Урилга</option>
+    </select>
+  </label>
+       <label class="item item-input item-select">
+          <div class="input-label">
+         Нэрээр:
+    </div>
+    <select   ng-model="data.name" ng-change="sortBy(data)">
+     <option value="">Cонгоно уу</option>
+      <option value="downName">А-Z</option>
+      <option value="upName" >Z-А</option>
+    </select>
+  </label>
+  {{ticketType}}
+         <label class="item item-input item-select">
+          <div class="input-label">
+         И-мэйлээр:
+    </div>
+    <select ng-model="data.email" ng-change="sortBy(data)">
+     <option value="">Cонгоно уу</option>
+      <option value="downEmail">А-Z</option>
+      <option value="upEmail" >Z-А</option>
+    </select>
+  </label>
+    <label class="item item-input item-select">
+          <div class="input-label">
+         Тасалбарын тоо:
+    </div>
+    <select  ng-model="data.number" ng-change="sortBy(data)">
+     <option value="">Cонгоно уу</option>
+      <option value="downNumber">1-9</option>
+      <option value="upNumber" >9-1</option>
+    </select>
+  </label>
+          </div>
+        </ion-content>
+      </ion-popover-view>

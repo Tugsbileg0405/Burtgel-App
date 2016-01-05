@@ -1,0 +1,39 @@
+ <ion-modal-view>
+  <ion-header-bar align-title="center" class="bar custom-color">
+    <div class="buttons" >
+    <li class="item item-checkbox custom-color" style="border:none">
+     <label class="checkbox checkbox-positive checkbox-square">
+       <input type="checkbox" ng-click="checkAll(selectedAll)" ng-model="selectedAll">
+     </label>
+  </li>
+  </div>
+  <h1 class="title" style="color:white">Мессеж илгээх</h1>
+  <div class="buttons">
+    <button class="button button-clear" style="color:white;font-size:14px" ng-click="closeModal()">Хаах</button>
+  </div>
+</ion-header-bar>
+
+    <ion-content has-header has-footer >
+       <div ng-repeat="ticket in notusedTickets | myFilter | unique:'ticket_phonenumber'">
+             <ion-checkbox class="checkbox-positive" id="check" ng-model="ticket.check" ng-click="Checked(ticket)">
+              <a class="item" id="profile" >
+                <img ng-if="!ticket.ticket_user.person_profile_img" src="img/default.png" >
+              <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img"   ng-src="{{ticket.ticket_user.person_profile_img}}">
+              <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
+              <p>{{ticket.ticket_user.person_email}}</p>
+              <p>{{ticket.ticket_countof}} ширхэг</p>
+              <p></p>
+            </a>
+            </ion-checkbox>
+    </div>
+    <div class="list card" ng-if="notusedTickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Тасалбар алга байна.
+        </div>
+    </ion-content>
+    <ion-footer-bar ng-click="sendModal()" align-title="left" style="border:1px solid #f8f8f8" class="bar ">
+  <h1 class="title" style="color:#289BB8">Мессеж илгээх</h1>
+  <div class="buttons" ng-click="sendModal()">
+    <button class="button" style="border:1px solid #289BB8;color:#289BB8;padding-left:15px;padding-right:15px"><i class="icon ion-iphone"></i></button>
+  </div>
+</ion-footer-bar>
+  </ion-modal-view>

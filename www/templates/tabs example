@@ -1,0 +1,25 @@
+    <ion-nav-bar class="bar-positive">
+          <ion-nav-back-button ui-sref="tab.dash">Буцах
+          </ion-nav-back-button>
+      <ion-nav-buttons side="right">
+      <button class="button button-clear" ui-sref="tab.search({eventId:eventid})">
+        <i class="icon ion-ios-search" style="padding:0 5px 0 5px"></i>
+      </button>
+    </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-content>
+ <div class="item tabs tabs-secondary" >
+    <a class="tab-item" style="font-size:16px;border-right:1px solid" ui-sref="tab.ticket.all">
+         Бүх тасалбар
+    </a>
+    <a class="tab-item"  style="font-size:16px;border-right:1px solid" ui-sref="tab.ticket.used">
+       Ашиглагдсан
+    </a>
+     <a class="tab-item"  style="font-size:16px" ui-sref="tab.ticket.notused">
+       Ашиглагдаагүй
+    </a>
+  </div>
+       <div class="list" style="border:1px solid;height:400px">
+            <ion-nav-view name="tab-dash-ticket"></ion-nav-view>
+       </div>
+</ion-content>

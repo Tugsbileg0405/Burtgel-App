@@ -1,29 +1,39 @@
 <ion-view cache-view="false">
 <ion-header-bar>
-   <label class="item item-input" id="search">
+<div class="bar bar-header item-input-inset">
+  <button class="button button-clear button-dark"  ng-click="myGoBack()"  style="color:black"><i class="icon ion-ios-arrow-back"></i></button>
+  <label class="item item-input" id="search">
     <i class="fa fa-search placeholder-icon"></i>
     <input type="text" placeholder="Хайх утгаа оруулна уу" ng-model="search">
   </label>
-    <button class="button button-clear button-dark"  ng-click="clear()" ng-show="search.length" id="clearButton"><i class="icon ion-ios-close-outline"></i></button>
+  <button class="button button-clear button-dark"  ng-click="clear()" ng-show="search.length" id="clearButton" style="color:black"><i class="icon ion-ios-close-outline"></i></button>
+</div>
 </ion-header-bar>
-
 <ion-content>
-<div class="list" id="searchList" ng-repeat="ticket in searchTickets | filter: search ">
-     		<a class="item item-avatar">
-     		<img src="img/default.png">
-     		<h2>{{ticket.ticket_fullname}}</h2>
-     		<p>{{ticket.ticket_phonenumber}}</p>
-     			<button class="button button-icon" ng-if="ticket.ticket_isUsed == false" ng-click="show($event,ticket.id)">
-     			<i class="icon ion-android-more-vertical"></i>
-           </button>
-            <button class="button button-icon" style="color:red" ng-if="ticket.ticket_isUsed == true" >
-          <i class="icon ion-android-checkmark-circle"></i>
-           </button>
-     		</a>
+<div  class="list" id="searchList" ng-repeat="ticket in searchTickets | filter: search | orderBy:'ticket_fullname'">
+ <a class="item item-avatar">
+  <img ng-if="!ticket.ticket_user.person_profile_img" src="img/default.png" >
+  <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img"  ng-src="{{ticket.ticket_user.person_profile_img}}">
+
+  <h2 ng-if="ticket.ticket_fullname == ''">{{ticket.ticket_created_by.person_firstname}} {{ticket.ticket_created_by.person_lastname}}</h2>
+  <h2 ng-if="ticket.ticket_fullname != ''">{{ticket.ticket_fullname}}</h2>
+  <h2 ng-if="ticket.ticket_fullname == undefined">{{ticket.ticket_created_by.person_firstname}} {{ticket.ticket_created_by.person_lastname}}</h2>
+  <p ng-if="ticket.ticket_phonenumber == ''">{{ticket.ticket_countof}} ширхэг</p>
+  <p ng-if="ticket.ticket_phonenumber != ''">{{ticket.ticket_phonenumber}}</p>
+  <p ng-if="ticket.ticket_phonenumber == undefined">{{ticket.ticket_countof}} ширхэг</p>
+  
+  
+  <button class="button button-icon button-clear" style="color:black" ng-if="ticket.ticket_isUsed == false" ng-click="show($event,ticket.id)">
+    <i class="icon ion-android-more-vertical"></i>
+  </button>
+  <button class="button button-icon button-clear" style="color:red" ng-if="ticket.ticket_isUsed == true" >
+    <i class="icon ion-android-checkmark-circle"></i>
+  </button>
+</a>
 
 </div>
-  <div class="list card" ng-if="searchTickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
-          Тасалбар алга байна.
-        </div>
+<div class="list card" ng-if="searchTickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+  Тасалбар алга байна.
+</div>
 </ion-content>
 </ion-view>

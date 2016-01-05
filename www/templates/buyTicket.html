@@ -1,0 +1,63 @@
+ <ion-modal-view cache-view="false">
+  <ion-header-bar align-title="center" class="bar custom-color">
+  
+  <h1 class="title" style="color:white">Худалдан авалт</h1>
+  <div class="buttons">
+    <button class="button button-clear" style="color:white;font-size:14px" ng-click="closeModal()">Хаах</button>
+  </div>
+</ion-header-bar>
+
+    <ion-content has-header>
+  			<form name="myForm">
+        <div class="list" style="height:50px;background-color:#f8f8f8">
+        <div class="row" id="mine">
+          <div class="col" style="padding-left:0"><span style="font-size:16px">Бусад хүнд</span></div>
+          <div class="col" style="text-align:center">
+            <label class="toggle" >
+       <input type="checkbox" ng-model="isChecked.checked" ng-change="check(ticket)" >
+       <div class="track" >
+         <div class="handle"></div>
+       </div>
+     </label>
+          </div>
+          <div class="col"><span style="font-size:16px">Өөртөө</span></div>
+        </div>
+        </div>
+<div class="list" id="buyticketfrm">
+<label class="item item-input" ng-show="ticket_counter == 1">
+  <span class="input-label"   id="buyticketLabel">Нэр:</span>
+  <input type="text" ng-model="ticket.ticket_fullname" placeholder="Нэр" id="ticketinput" > 
+</label>
+<label class="item item-input" >
+  <span class="input-label"   id="buyticketLabel">И-мэйл:</span>
+    <input type="email" ng-model="ticket.ticket_email" placeholder="И-мэйл" id="ticketinput" > 
+ </label>
+   <label class="item item-input" >   
+       <span class="input-label"  id="buyticketLabel">Утас:</span>
+      <input type="text" ng-model="ticket.ticket_phonenumber" placeholder="Утас" id="ticketinput" >
+    </label> 
+</div>
+<div class="list" id="selectTicket">
+ <select  ng-model="ticket.event_ticket_type" id="select" required >
+  <option value="" >Тасалбарын төрөлөө сонгоно уу</option>
+  <option  value="{{free_ticket | json}}"  ng-repeat="free_ticket in event_ticket.free" >Үнэгүй-{{free_ticket.description}} ({{free_ticket.remaining}})</option>
+  <option  value="{{paid_ticket | json}}" ng-repeat="paid_ticket in event_ticket.paid"><p>Төлбөртэй-{{paid_ticket.description}} ({{paid_ticket.remaining}})</p></option>
+  <option  value="{{urilga_ticket | json}}" ng-repeat="urilga_ticket in event_ticket.urilga"><p>Урилга-{{urilga_ticket.description}} ({{urilga_ticket.remaining}})</p></option>
+</select>
+</div>
+<div class="list" style="width:330px;margin-bottom:0px;margin-left:auto;margin-right:auto;padding-left:auto;padding-right:auto">
+   <span style="background-color:#289BB8;color:white;padding:5px;padding-left:15px;padding-right:15px;border-radius:5px;font-weight:bold;font-size:20px;margin-left:100px" ng-click="sub()"><</span>
+  <span style="font-size:22px;margin:10px"> {{ticket_counter}} </span>
+    <span style="background-color:#289BB8;border-radius:5px;color:white;padding:5px;padding-left:15px;padding-right:15px;font-weight:bold;font-size:20px;margin-right:a" ng-click="add()">></span> 
+</div>
+<div class="list" style="font-size:18px;text-align:center;margin-top:0;margin-bottom:0">
+  <span >ширхэг</span>
+</div>
+<div class="item" style="border:none;padding-top:0">
+      <button ng-disabled="myForm.$invalid" type="submit" ng-click="buyTicket(ticket)" class="button button-full" style="background-color:#289BB8;border:1px solid #289BB8;color:white">
+  Худалдан авах
+</button>
+</div>
+</form>
+    </ion-content>
+  </ion-modal-view>

@@ -1,8 +1,9 @@
-<ion-content >
-    <ion-refresher
+   <ion-content >
+      <ion-refresher
     on-refresh="doRefresh()">
   </ion-refresher>
         <div ng-repeat="ticket in tickets">
+          <span id="used" ng-show="ticket.ticket_isUsed == true"><p>Ашиглагдсан</p></span>
      <ion-checkbox class="checkbox-positive" id="check" ng-checked="ticket.ticket_isUsed" ng-model="ticket.ticket_isUsed" ng-click="isChecked(ticket)">
       <a class="item" id="profile" >
       <img src="img/default.png" >
@@ -10,11 +11,10 @@
       <p>{{ticket.ticket_user.person_email}}</p>
       <p>{{ticket.ticket_countof}} ширхэг</p>
     </a>
-    <span id="back" ng-show="ticket.ticket_isUsed == true"></span>
-    <span id="used" ng-show="ticket.ticket_isUsed == true">Ашиглагдсан</span>
     </ion-checkbox>
     </div>
-        <div class="list card" ng-if="tickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px">
+        <div class="list card" ng-if="tickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
           Тасалбар алга байна.
         </div>
+
   </ion-content>

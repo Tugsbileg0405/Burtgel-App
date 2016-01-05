@@ -1,4 +1,86 @@
- <ion-view title="{{navTitle}}"  left-buttons="leftButtons">
-
-
+ <ion-view  >
+   <ion-nav-bar class="bar custom-color">
+     <ion-nav-buttons side="left">
+      <button class="button button-clear" ui-sref="tab.dash" style="color:white">
+        <i class="icon ion-ios-arrow-back" style="padding:0 5px 0 5px"></i>
+        Буцах
+      </button>
+    </ion-nav-buttons>
+    <ion-nav-title>
+      <h1 class="title" style="color:white" >{{tickets.length}} ширхэг </h1>
+    </ion-nav-title>
+      <ion-nav-buttons side="right">
+      <button class="button button-clear" ng-click="show()" style="color:white" >
+       <i class="fa fa-sort-amount-asc"></i>
+      </button>
+        <button class="button button-clear" style="color:white" ui-sref="tab.search({eventId:eventid})">
+        <i class="icon ion-ios-search" style="padding:0 5px 0 5px"></i>
+      </button>
+    </ion-nav-buttons>
+    </ion-nav-bar>
+ 	<ion-content overflow-scroll='true' >
+     <ion-refresher
+    on-refresh="doRefresh()">
+  </ion-refresher>
+ 		<div ng-repeat="ticket in tickets | orderBy:sortType:sortReverse" ng-show="counter == 0">
+ 				     <span id="used" ng-show="ticket.ticket_isUsed == true"><p>Ашиглагдсан</p></span>
+				     <ion-checkbox class="checkbox-positive" id="check" ng-checked="ticket.ticket_isUsed" ng-model="ticket.ticket_isUsed" ng-click="isChecked(ticket)">
+				      <a class="item" id="profile" >
+				      <img  ng-if="!ticket.ticket_user.person_profile_img" src="img/default.png" >
+              <img  fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img" ng-src="{{ticket.ticket_user.person_profile_img}}">
+				      <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
+				      <p>{{ticket.ticket_user.person_email}}</p>
+				      <p>{{ticket.ticket_countof}} ширхэг</p>
+				    </a>
+				    </ion-checkbox>
+ 		</div>
+        <div ng-repeat="ticket in ticket_type.freeticket " ng-show="counter == 1">
+             <span id="used" ng-show="ticket.ticket_isUsed == true"><p>Ашиглагдсан</p></span>
+             <ion-checkbox class="checkbox-positive" id="check" ng-checked="ticket.ticket_isUsed" ng-model="ticket.ticket_isUsed" ng-click="isChecked(ticket)">
+              <a class="item" id="profile" >
+               <img ng-if="!ticket.ticket_user.person_profile_img" src="img/default.png" >
+              <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img"  ng-src="{{ticket.ticket_user.person_profile_img}}">
+              <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
+              <p>{{ticket.ticket_user.person_email}}</p>
+              <p>{{ticket.ticket_countof}} ширхэг</p>
+            </a>
+            </ion-checkbox>
+    </div>
+        <div ng-repeat="ticket in ticket_type.paidticket " ng-show="counter == 2">
+             <span id="used" ng-show="ticket.ticket_isUsed == true"><p>Ашиглагдсан</p></span>
+             <ion-checkbox class="checkbox-positive" id="check" ng-checked="ticket.ticket_isUsed" ng-model="ticket.ticket_isUsed" ng-click="isChecked(ticket)">
+              <a class="item" id="profile" >
+                <img ng-if="!ticket.ticket_user.person_profile_img" src="img/default.png" >
+              <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img"  ng-src="{{ticket.ticket_user.person_profile_img}}">
+              <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
+              <p>{{ticket.ticket_user.person_email}}</p>
+              <p>{{ticket.ticket_countof}} ширхэг </p>
+            </a>
+            </ion-checkbox>
+    </div>
+          <div ng-repeat="ticket in ticket_type.urilgaticket " ng-show="counter == 3">
+             <span id="used" ng-show="ticket.ticket_isUsed == true"><p>Ашиглагдсан</p></span>
+             <ion-checkbox class="checkbox-myColor" id="check" ng-checked="ticket.ticket_isUsed" ng-model="ticket.ticket_isUsed" ng-click="isChecked(ticket)">
+              <a class="item" id="profile" >
+                <img ng-if="!ticket.ticket_user.person_profile_img" src="img/default.png" >
+              <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img"  ng-src="{{ticket.ticket_user.person_profile_img}}">
+              <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
+              <p>{{ticket.ticket_user.person_email}}</p>
+              <p>{{ticket.ticket_countof}} ширхэг </p>
+            </a>
+            </ion-checkbox>
+    </div>
+ 		<div class="list card" ng-if="tickets.length == 0" ng-show="counter == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Тасалбар алга байна.
+        </div>
+          <div class="list card" ng-show="counter == 3" ng-if="ticket_type.urilgaticket.length == 0"  style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Тасалбар алга байна.
+        </div>
+            <div class="list card" ng-show="counter == 2" ng-if="ticket_type.paidticket.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Тасалбар алга байна.
+        </div>
+            <div class="list card" ng-show="counter == 1" ng-if="ticket_type.freeticket.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+          Тасалбар алга байна.
+        </div>
+ 		</ion-content>
 </ion-view>

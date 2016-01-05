@@ -1,0 +1,18 @@
+    $scope.sortBy = function(data){
+      $scope.ticketType = [];
+      if(data == 'Free') {
+           for( i in $scope.tickets){
+            if($scope.tickets[i].ticket_type == 'Free'){
+              $scope.ticketType.push($scope.tickets[i]);
+            }
+        }
+      }
+      else if (data == 'Paid'){
+        for( i in $scope.tickets){
+            if($scope.tickets[i].ticket_type == 'Paid'){
+              $scope.ticketType.push($scope.tickets[i]);
+            }
+        }
+      }
+          $scope.tickets = $scope.ticketType;
+    }

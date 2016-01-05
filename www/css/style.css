@@ -7,7 +7,40 @@
 	font-size: 16px;
 	color:#f8f8f8;
 }
+.buyButton .popup-buttons .button{
+	background-color: #289BB8;
+	border: 1px solid #289BB8;
+}
+.error .popup-buttons .button{
+	background-color: red;
+	border: 1px solid red;
+}
+.success .popup-buttons .button{
+	background-color: #00cc52;
+	border: 1px solid #00cc52;
+}
+#mine {
+  width:330px;margin-left:auto;margin-right:auto;padding-left:0;
+}
 
+ .custom-color{
+    color : white !important; 
+    background-color:#289BB8 !important; 
+ }
+ .custom-color .checkbox input:before{
+
+ }
+ div.title.title-center.header-item{
+ 	text-align: center !important;
+ }
+.lgBtn {
+  width: 100%;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding:8px 0 8px 0;
+  background-color: white;
+  color: gray;
+}
 #profile {
 	border:none;
 	padding: 5px 0 5px 10px;
@@ -30,6 +63,11 @@
 	font-size: 14px;
 	text-align: left;
 }
+.tabs .tab-item {
+	color: #289BB8 !important;
+	border-color: #289BB8 !important;
+}
+
 #check {
 	margin-top: 0px;
 	padding-top:5px;
@@ -70,6 +108,16 @@
 	color: white;
 
 }
+#register button[disabled]{
+	 color: white !important;
+   border: none !important;
+  background-color:rgba(101,197,221,0.8) !important;
+}
+#forgot button[disabled]{
+   color: white !important;
+   border: none !important;
+  background-color:rgba(101,197,221,0.8) !important;
+}
 #used p{
 	position: absolute;
 	bottom: 10px;
@@ -87,13 +135,11 @@
 }
 #ticketInfo {
 	padding: 0;
-	width: 360px;
 }
 #ticketInfo .item {
 	border: none;
 }
 #ticketInfo input {
-	overflow: auto;
 	border-bottom:1px solid green;
 }
 #ticketInfo .input-label {
@@ -122,11 +168,20 @@ top:137px;
 
 #search {
 	border: none;
+	padding: 0;
 	width: 100%;
+}
+#search i {
+	font-size: 20px;
+}
+#search ::-webkit-input-placeholder {
+ font-size: 17px;
+ padding-top: 2px;
+ color: #aaa;
 }
 #search input {
 	font-size: 17px;
-	padding-top: 5px;
+	padding-top: 2px;
 	padding-left: 10px;
 }
 #clearButton {
@@ -142,19 +197,46 @@ top:137px;
 #searchList button {
 	position: absolute;
 	top: 10px;
+	padding-right: 0px;
 	right: 10px;
 }
+
+
 ion-popover-view.fit {
   height: auto !important;
+  background-color: white !important;
 }
 
+ion-popover-view.fit ion-header-bar {
+    position: relative !important;
+}
 ion-popover-view.fit ion-content {
   position: relative !important;
 }
-
+ion-popover-view.fit select {
+  font-size: 15px;
+  padding-bottom: 0;
+}
+ion-popover-view.fit div.input-label{
+	padding-top: 0px;
+}
 .platform-android ion-popover-view.fit {
   margin-top: 10px !important;
 }
+.platform-android ion-popover-view.fit select {
+  background-color: transparent !important;
+}
+.item-select select {
+	height: 43px;
+}
+
+.selectBox {
+	border: none;
+	color : white !important; 
+    background-color:#289BB8 !important; 
+    background-image: url(../img/arrow.png),
+}
+
 .popup-body {
 	text-align: center;
 	font-size: 16px;
@@ -168,12 +250,20 @@ ion-popover-view.fit ion-content {
 #scanData i {
 	font-size: 25px;
 }
+#proInfo span {
+	margin-left: -15px;
+	width: 120px;
+}
 #proInfo input {
 	text-align: right;
-	border-bottom: 1px solid orange ;
+	border-bottom: 1px solid #289bb8 ;
+}
+.list label {
+	border: none;
+	border-bottom: 1px solid #ddd;
 }
 #proInfo label{
-	border: none;
+	border:none;
 }
 .image-loader-container {
   margin: 9px;
@@ -211,9 +301,11 @@ a:active{
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
-#subInfo span {
-	position: absolute;
-	right: 20px;
+
+#notused {
+		border: 1px solid;
+		text-align: center;
+		width: 100%;
 }
 #usedcount {
 	padding: 5px 10px 0px 10px;
@@ -238,4 +330,34 @@ a:active{
   width: 80px;
   height:80px;
   border-radius: 100%;
+}
+ 
+#buyticketfrm {
+  margin-left:auto;
+  margin-right:auto;
+  width:330px;
+}
+#buyticketfrm label {
+  padding-left: 0px;
+ 
+}
+#ticketinput{
+
+  padding-left:10px;
+  font-size:17px;height:35px;background-color:#f8f8f8;border-bottom:1px solid #289BB8;
+}
+#buyticketLabel{
+    width: 80px;
+  font-size: 17px;
+  margin-left: 0px !important;
+}
+#selectTicket {
+  width:330px;margin-left:auto;margin-right:auto;
+}
+#select {
+  border-radius:2px;padding:5px;width:330px;font-size:17px;height:40px;background-color:white;border:1px solid #289BB8;
+}
+.toggle input:checked + .track {
+    background-color:#289BB8;
+    border-color:#289BB8;
 }

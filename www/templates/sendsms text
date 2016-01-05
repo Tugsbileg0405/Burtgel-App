@@ -1,0 +1,5 @@
+  <label class="item item-input item-stacked-label">
+    <span class="input-label">Утасны дугаар:</span>
+    <input type="text" ng-model="ticketInfo.ticket_phonenumber" ng-if="ticketInfo.ticket_phonenumber != ''" placeholder="Утасны дугаар">
+     <input type="text" placeholder="Хэрэглэгчийн утасны дугаар байхгүй байна." ng-if="ticketInfo.ticket_phonenumber == '' ">
+  </label>

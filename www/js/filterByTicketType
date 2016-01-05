@@ -1,0 +1,35 @@
+ $scope.sortTicket = function(data){
+      console.log(data);
+      delete $scope.tickets;
+      $scope.freeticket=[];
+      $scope.urilgaticket = [];
+      $scope.paidticket = [];
+        if(data.ticketType == 'Free') {
+          for(i in $scope.tickets){
+            if($scope.tickets[i].ticket_type == 'Free'){
+                $scope.freeticket.push($scope.tickets[i]);
+                $scope.counter = 1;
+              }
+          }
+      }
+      else if (data.ticketType == 'Paid'){
+              for(i in $scope.tickets){
+            if($scope.tickets[i].ticket_type == 'Paid'){
+                $scope.paidticket.push($scope.tickets[i]);
+                $scope.counter = 2;
+              }
+          }
+      }
+        else if (data.ticketType == 'Urilga'){
+               for(i in $scope.tickets){
+            if($scope.tickets[i].ticket_type == 'Urilga'){
+                $scope.urilgaticket.push($scope.tickets[i]);
+                $scope.counter = 3;
+              }
+          }
+      }
+      else{
+        $scope.counter = 0;
+      }
+        $scope.hide();
+    }

@@ -1,22 +1,36 @@
 <ion-view view-title="Арга хэмжээ">
-   <ion-nav-bar class="bar-positive">
+   <ion-nav-bar class="bar custom-color">
     </ion-nav-bar>
-  <ion-content lazy-scroll>
+  <ion-content lazy-scroll overflow-scroll='true' >
    <ion-refresher
     on-refresh="doRefresh()">
   </ion-refresher>
-        <div ng-repeat="event in events">
-          <div class="list">
-		    <a class="item item-thumbnail-left" id="myEvent" href="#/tab/dash/{{event.id}}">
-		      <img image-lazy-src="{{backSite}}/{{event.event_cover}}" image-lazy-loader="android">
+        <div ng-repeat="event in events"  class="animate-rip">
+          <div class="list" style="border-bottom:1px solid #f8f8f8">
+		    <a class="item item-thumbnail-left" id="myEvent" href="#/tab/dash/{{event.id}}/all">
+		      <img ng-cache ng-src="{{backSite}}/{{event.event_cover}}" >
 		      <h2 id="eventTitle">{{event.event_title}}</h2>
-		      <p class="eventText"><i class="icon ion-ios-clock-outline"></i> {{event.event_start_date | date:'medium'}}</p>
-		      <p class="eventText"><i class="icon ion-ios-location-outline"></i> {{event.event_location}}</p>
+          <div class="row" style="padding:0 0 5px 0">
+              <div class="col col-10" style="padding:0">
+                <p class="eventText"><i class="icon ion-ios-clock-outline"></i></p>
+              </div>
+              <div class="col col-90" style="padding:0">
+                <p class="eventText"> {{event.event_start_date | date:'EEEE, MMMM d, y '}}</p>
+              </div>
+          </div>
+             <div class="row" style="padding:0 0 5px 0">
+              <div class="col col-10" style="padding:0">
+                <p class="eventText"><i class="icon ion-ios-location-outline"></i> </p>
+              </div>
+              <div class="col col-90" style="padding:0">
+                <p class="eventText"> {{event.event_location}}</p>
+              </div>
+          </div>
 		    </a>
 		</div>
         </div>
-          <div class="list card" ng-if="tickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
-          Хоосон байна.
+          <div class="list card" ng-if="events.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:20px">
+          Арга хэмжээ байхгүй байна.
         </div>
   </ion-content>
   

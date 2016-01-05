@@ -5,35 +5,42 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ionicLazyLoad','ngMaterial','starter.controllers','starter.services','starter.auth','ngStorage','ngCordova'])
+angular.module('starter', ['ionic','ngResource','angular.filter','ionicProcessSpinner','ionicLazyLoad','ngMaterial','ionic-material','starter.controllers','starter.services','starter.auth','ngStorage','ngCordova'])
 
 .run(function($ionicPlatform,AuthService,$rootScope,$state,$ionicLoading,$ionicPopup) {
 
-     $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromStateParams) {
-      if(toState.name.indexOf('tab') !== -1 ) {
+ $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromStateParams) {
+  if(toState.name.indexOf('tab') !== -1 ) {
 
-        if(!AuthService.getAuthStatus()) {
-              event.preventDefault();
-              $state.go('login',{},{reload:true});
-        }
-        
-      }
-    })
+    if(!AuthService.getAuthStatus()) {
+      event.preventDefault();
+      $state.go('login',{},{reload:true});
+    }
 
-  $ionicPlatform.ready(function() {
+  }
+})
+ ImgCache.options.debug = true;
+ ImgCache.options.chromeQuota = 50*1024*1024;  
+ 
+ ImgCache.init(function() {
+  console.log('ImgCache init: success!');
+}, function(){
+  console.log('ImgCache init: error! Check the log for errors');
+});
+ $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      cordova.plugins.Keyboard.disableScroll(true);
+ if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+  cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+  cordova.plugins.Keyboard.disableScroll(true);
 
-    }
-    if (window.StatusBar) {
+}
+if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleLightContent();
     }
 
-        $ionicPlatform.registerBackButtonAction(function(){
+    $ionicPlatform.registerBackButtonAction(function(){
       if($state.current.name == 'tab.dash'){
         navigator.app.exitApp();
       }
@@ -42,48 +49,56 @@ angular.module('starter', ['ionic','ionicLazyLoad','ngMaterial','starter.control
       }
     },100)
 
-          if(window.Connection) {
-                if(navigator.connection.type == Connection.NONE) {
-                    $ionicLoading.hide();
-                    $ionicPopup.alert({
-                        okType: 'button-assertive',
-                        content: "Та интернетэд холбогдож байж ашиглана уу"
-                    })
-                    .then(function(result) {
-                        if(result) {
-                            ionic.Platform.exitApp();
-                        }
-                    });
-           }
+    if(window.Connection) {
+      if(navigator.connection.type == Connection.NONE) {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          okType: 'button-assertive',
+          content: "Та интернетэд холбогдож байж ашиглана уу"
+        })
+        .then(function(result) {
+          if(result) {
+            ionic.Platform.exitApp();
+          }
+        });
+      }
     }
   });
 })
 
 .config(function($stateProvider,$httpProvider,$mdGestureProvider,$urlRouterProvider,$ionicConfigProvider) {
-  
-      $httpProvider.defaults.timeout = 5000;
-      $ionicConfigProvider.views.transition('none');
-         $mdGestureProvider.skipClickHijack();
+
+  $httpProvider.defaults.timeout = 5000;
+  $ionicConfigProvider.views.transition('android');
+  $mdGestureProvider.skipClickHijack();
   $ionicConfigProvider.tabs.position('bottom');
   $ionicConfigProvider.navBar.alignTitle('center');
-  $ionicConfigProvider.form.checkbox('circle');
+  $ionicConfigProvider.form.checkbox('square');
   $ionicConfigProvider.backButton.icon('ion-ios-arrow-back');
   $ionicConfigProvider.form.toggle('large');
-    $stateProvider
+  $stateProvider
 
-    .state('login', {
+  .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl'
   })
-
-    .state('tab', {
+  .state('register', {
+    url: '/register',
+    templateUrl: 'templates/register.html',
+    controller: 'registerCtrl'
+  })
+  .state('tab', {
     url: '/tab',
     abstract: true,
     templateUrl: 'templates/tabs.html'
   })
+  .state('forgotpassword',{
+    url: '/forgotpassword',
+    templateUrl:'templates/forgotpassword.html',
+    controller:'ForgotPasswordCtrl'
+  })
 
-  // Each tab has its own nav history stack:
 
   .state('tab.dash', {
     url: '/dash',
@@ -98,17 +113,45 @@ angular.module('starter', ['ionic','ionicLazyLoad','ngMaterial','starter.control
     url: '/dash/:eventId',
     views: {
       'tab-dash':{
-            templateUrl: 'templates/tickets.html',
-             controller: 'ticketCtrl'
+        templateUrl: 'templates/tickets.html',
+        controller: 'allticketCtrl'
       }
     }
   })
-    .state('tab.search', {
+  .state('tab.ticket.all',{
+    url:'/all',
+    views:{
+      'tab-dash-1': {
+        templateUrl:'templates/chat-detail.html',
+        controller:'ticketCtrl'
+      }
+    }
+  })
+  .state('tab.ticket.used',{
+    url:'/used',
+    views:{
+      'tab-dash-2': {
+        templateUrl:'templates/used.html',
+        controller:'usedTicketCtrl'
+      }
+    }
+  })
+  .state('tab.ticket.notused',{
+    url:'/notused',
+    views:{
+      'tab-dash-3': {
+        templateUrl:'templates/notused.html',
+        controller:'notusedTicketCtrl'
+      }
+    }
+  })
+
+  .state('tab.search', {
     url: '/dash/:eventId/search',
     views: {
       'tab-dash':{
-            templateUrl: 'templates/search.html',
-             controller: 'searchCtrl'
+        templateUrl: 'templates/search.html',
+        controller: 'searchCtrl'
       }
     }
   })
@@ -116,21 +159,21 @@ angular.module('starter', ['ionic','ionicLazyLoad','ngMaterial','starter.control
     url: '/dash/:eventId/used',
     views: {
       'tab-dash':{
-            templateUrl: 'templates/used.html',
-             controller: 'usedTicketCtrl'
+        templateUrl: 'templates/used.html',
+        controller: 'usedTicketCtrl'
       }
     }
   })
   
   .state('tab.chats', {
-      url: '/chats',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
-        }
+    url: '/chats',
+    views: {
+      'tab-chats': {
+        templateUrl: 'templates/tab-chats.html',
+        controller: 'ChatsCtrl'
       }
-    })
+    }
+  })
 
   .state('tab.account', {
     url: '/account',
@@ -141,11 +184,81 @@ angular.module('starter', ['ionic','ionicLazyLoad','ngMaterial','starter.control
       }
     }
   })
- 
   ;
- 
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/dash');
 
 
+})
+
+
+.filter('myFilter', function() {
+
+  return function(input) {
+    var newInput = [];
+    angular.forEach(input, function(item) {
+      if (item.ticket_phonenumber != "") newInput.push(item);
+    });
+    return newInput;
+  };
+})
+.directive('nxEqualEx', function() {
+  return {
+    require: 'ngModel',
+    link: function (scope, elem, attrs, model) {
+      if (!attrs.nxEqualEx) {
+        console.error('nxEqualEx expects a model as an argument!');
+        return;
+      }
+      scope.$watch(attrs.nxEqualEx, function (value) {
+                // Only compare values if the second ctrl has a value.
+                if (model.$viewValue !== undefined && model.$viewValue !== '') {
+                  model.$setValidity('nxEqualEx', value === model.$viewValue);
+                }
+              });
+      model.$parsers.push(function (value) {
+                // Mute the nxEqual error if the second ctrl is empty.
+                if (value === undefined || value === '') {
+                  model.$setValidity('nxEqualEx', true);
+                  return value;
+                }
+                var isValid = value === scope.$eval(attrs.nxEqualEx);
+                model.$setValidity('nxEqualEx', isValid);
+                return isValid ? value : undefined;
+              });
+    }
+  };
+})
+.directive('ngCache', function() {
+
+  return {
+    restrict: 'A',
+    link: function(scope, el, attrs) {
+
+      attrs.$observe('ngSrc', function(src) {
+
+        ImgCache.isCached(src, function(path, success) {
+          if (success) {
+            ImgCache.useCachedFile(el);
+          } else {
+            ImgCache.cacheFile(src, function() {
+              ImgCache.useCachedFile(el);
+            });
+          }
+        });
+
+      });
+    }
+  };
+})
+.directive('fallbackSrc', function () {
+  var fallbackSrc = {
+    link: function postLink(scope, iElement, iAttrs) {
+      iElement.bind('error', function() {
+        angular.element(this).attr("src", iAttrs.fallbackSrc);
+      });
+    }
+  }
+  return fallbackSrc;
 });

@@ -1,0 +1,10 @@
+  <ion-popover-view class="fit" >
+        <ion-content>
+              <ion-radio ng-repeat="item in sortName" ng-click="sortByName(item)" ng-model="data.name" ng-value="item.name">
+          <i style="font-size:18px" class="fa {{item.icon}}"></i> Нэрээр
+        </ion-radio>
+             <ion-radio ng-repeat="item in sortTicketType" ng-click="sortTicket(item)" ng-model="data.eventType" ng-value="item.eventType">
+        <i style="font-size:18px" class="fa fa-ticket"></i> {{item.text}}
+        </ion-radio>
+        </ion-content>
+      </ion-popover-view>
