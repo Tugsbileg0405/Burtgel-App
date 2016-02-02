@@ -7,6 +7,16 @@
 	font-size: 16px;
 	color:#f8f8f8;
 }
+.used {
+  border:1px solid;
+  color: white;
+  background-color: rgba(249, 37, 37, 0.7);
+  padding:5px 10px 5px 10px;
+  position: absolute;
+  right: 0;
+  bottom: 0px;
+  z-index: 100;
+}
 .buyButton .popup-buttons .button{
 	background-color: #289BB8;
 	border: 1px solid #289BB8;
@@ -14,6 +24,9 @@
 .error .popup-buttons .button{
 	background-color: red;
 	border: 1px solid red;
+}
+#createEvent input{
+  border: 1px solid #d0d4d9;
 }
 .success .popup-buttons .button{
 	background-color: #00cc52;
@@ -169,6 +182,7 @@ top:137px;
 #search {
 	border: none;
 	padding: 0;
+  margin: 0;
 	width: 100%;
 }
 #search i {
@@ -181,7 +195,6 @@ top:137px;
 }
 #search input {
 	font-size: 17px;
-	padding-top: 2px;
 	padding-left: 10px;
 }
 #clearButton {
@@ -360,4 +373,106 @@ a:active{
 .toggle input:checked + .track {
     background-color:#289BB8;
     border-color:#289BB8;
+}
+/*Iphone 4*/
+@media screen and (device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2){
+   .profile-picture {
+      left:5px;
+   }
+  #buyticketfrm{
+    width: 290px;
+  }
+  #mine {
+    width: 290px;
+  }
+  #buyticketLabel{
+    padding-right: 0px;
+    width: 80px;
+  }
+  #ticketinput {
+    font-size: 15px;
+  }
+  #select {
+    width: 290px;
+    font-size: 15px;
+  }
+  #selectTicket {
+    width: 290px;
+    padding: 0;
+  }
+}
+/*Iphone 5*/
+@media screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2){
+  .profile-picture {
+      left:5px;
+   }
+  #buyticketfrm{
+    width: 290px;
+  }
+  #mine {
+    width: 290px;
+  }
+  #buyticketLabel{
+    padding-right: 0px;
+    width: 80px;
+  }
+  #ticketinput {
+    font-size: 17px;
+  }
+  #select {
+    width: 290px;
+  }
+  #selectTicket {
+    width: 290px;
+  }
+}
+/*IPad*/
+@media screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2){
+ .profile-picture {
+      left:75px;
+   }
+  #buyticketfrm{
+    width: 290px;
+  }
+  #mine {
+    width: 290px;
+  }
+  #buyticketLabel{
+    padding-right: 0px;
+    width: 80px;
+  }
+  #ticketinput {
+    font-size: 17px;
+  }
+  #select {
+    width: 290px;
+  }
+  #selectTicket {
+    width: 290px;
+  }
+}
+/*Iphone 6*/
+@media screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2){
+  .profile-picture {
+      left:15px;
+   }
+  #buyticketfrm{
+    width: 290px;
+  }
+  #mine {
+    width: 290px;
+  }
+  #buyticketLabel{
+    padding-right: 0px;
+    width: 80px;
+  }
+  #ticketinput {
+    font-size: 17px;
+  }
+  #select {
+    width: 290px;
+  }
+  #selectTicket {
+    width: 290px;
+  }
 }

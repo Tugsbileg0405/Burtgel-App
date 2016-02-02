@@ -1,0 +1,18 @@
+<ion-tabs class="tabs-striped  tabs-top custom-tabs has-header has-footer" on-swipe-right="goBack()" on-swipe-left="goForward()" >
+ 
+  <ion-tab title="Бүх тасалбар" href="#/tab/dash/{{eventid}}/all">
+    <ion-nav-view name="tab-dash-1" ></ion-nav-view>
+  </ion-tab>
+
+  <ion-tab title="Ашигласан"  href="#/tab/dash/{{eventid}}/used">
+    <ion-nav-view name="tab-dash-2" ></ion-nav-view>
+  </ion-tab>
+
+
+  <ion-tab title="Ашиглаагүй" href="#/tab/dash/{{eventid}}/notused">
+     <ion-nav-view name="tab-dash-3" ></ion-nav-view>
+  </ion-tab>
+</ion-tabs>
+  <ion-pane class="has-tabs" has-header="true" has-footer="true" padding="false" >
+          
+    </ion-pane>

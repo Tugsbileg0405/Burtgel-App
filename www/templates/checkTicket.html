@@ -1,0 +1,23 @@
+ <ion-modal-view cache-view="false">
+ <ion-header-bar align-title="center" class="bar custom-color">
+<h1 class="title" style="color:white">Тасалбар шалгах</h1>
+<div class="buttons" >
+  <button class="button button-clear" style="color:white;font-size:15px" ng-click="closeCheckTicket()"><span>Хаах</span></button>
+</div>
+</ion-header-bar>
+
+<ion-content has-header>
+
+<div  class="item item-text-wrap"  style="font-size:15px;text-align:center;margin-top:100px;border:none" >
+ <p style="font-size:16px" id="scanData">  Та дээр байрлах &nbsp <i class="icon ion-ios-camera-outline"></i>&nbsp товчин дээр дарж тасалбараа уншуулна уу.</p><br>
+ <p style="font-size:16px; text-transform: uppercase;font-weight:bold" id="scanData"> Таны тасалбарын мэдээлэл энэд гарч ирэх болно.</p>
+ <button class="button button-block" style="background-color:#289bb8;color:white;border:1px solid #289bb8;padding:0" ng-click="scan()">
+  <span >Камераар шалгах</span>
+</button>
+<button class="button button-block" style="background-color:#21D268;color:white;border:1px solid #21D268;padding:0" ng-click="openHandcheck()">
+  <span >Гараар шалгах</span>
+</button>
+</div>
+
+</ion-content>
+</ion-modal-view>

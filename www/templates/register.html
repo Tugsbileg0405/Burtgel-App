@@ -18,11 +18,6 @@
       </div>
       <div class="list">
         <form name="myForm" id="register">
-         <label class="item item-input item-floating-label">
-              <span class="input-label">Овог:</span>
-              <input type="text" name="lastname" placeholder="Овог" ng-model="reg.uname" required>
-             </span>
-          </label>
           <label class="item item-input item-floating-label">
               <span class="input-label">Нэр:</span>
               <input type="text" name="lastname" placeholder="Нэр" ng-model="reg.fname" required>
@@ -30,7 +25,7 @@
           </label>
               <label class="item item-input item-floating-label" >
             <span class="input-label">Утасны дугаар:</span>
-              <input type="text" placeholder="Утасны дугаар" ng-model="reg.phone">
+              <input type="text" placeholder="Утасны дугаар" required ng-model="reg.phone" >
           </label>
             <label class="item item-input item-floating-label">
               <span class="input-label">И-мэйл:</span>

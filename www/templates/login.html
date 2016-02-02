@@ -1,49 +1,48 @@
 <ion-view cache-view="false">
-  <ion-content >
-    <ion-item  >
-    <br>
-    		<div class="row" >
-    				<div class="col"></div>
-    				<div class="col col-50" style="text-align:center"><img src="img/logo.png" style="width:80px;height:80px">
-            </div>
-					<div class="col"></div>
-    		</div>
-        <div class="row">
-            <div style="width:100%;text-align:center;font-weight:bold"><p style="font-size:16px">БҮРТГЭЛ</p></div>
-        </div>
-        <br>
-         <p id="demo"></p>
-    			<form role="form">
-  					<div class="list">
-			  				<label class="item item-input item-floating-label" id="lgnname">
-			 			   			<span class="input-label" >И-мэйл хаяг эсвэл утасны дугаар:</span>
-			 			   				<input type="text" ng-model="emails"  placeholder="И-мэйл хаяг эсвэл утасны дугаар" required>
-			  			   </label>
-			 				 <label class="item item-input item-floating-label">
-			    			
-			    					<span class="input-label">Нууц үг:</span>
-			    					<input type="password" ng-model="pass" name="password" placeholder="Нууц үг" required>
-			  				</label>
-                <br>
-      			  				<button ng-click="login({email:emails,pass:pass})" style="background-color:#289BB8;color:white;border-radius:5px;width:100%;padding-top:10px;padding-bottom:10px;border:1px solid #289BB8" type="submit"  >
-			  						Нэвтрэх
-						   </button>
-					</div>	
-					</form>
+<ion-content >
+<ion-item  >
+<br>
+<div class="row" >
+  <div class="col"></div>
+  <div class="col col-50" style="text-align:center"><img src="img/logo.png" style="width:80px;height:80px">
+  </div>
+  <div class="col"></div>
+</div>
+<div class="row">
+  <div style="width:100%;text-align:center;font-weight:bold"><p style="font-size:16px">БҮРТГЭЛ</p></div>
+</div>
+<br>
+<p id="demo"></p>
+<form role="form">
+ <div class="list">
+   <label class="item item-input item-floating-label" id="lgnname">
+     <span class="input-label" >И-мэйл хаяг эсвэл утасны дугаар:</span>
+     <input type="text" ng-model="emails"  placeholder="И-мэйл хаяг эсвэл утасны дугаар" required>
+   </label>
+   <label class="item item-input item-floating-label">
+    
+    <span class="input-label">Нууц үг:</span>
+    <input type="password" ng-model="pass" name="password" placeholder="Нууц үг" required>
+  </label>
+  <br>
+  <button ng-click="login({email:emails,pass:pass})" style="background-color:#289BB8;color:white;border-radius:5px;width:100%;padding-top:10px;padding-bottom:10px;border:1px solid #289BB8" type="submit"  >
+   Нэвтрэх
+ </button>
+</div>	
+</form>
 <h2 id="or" style="margin-top:3%;margin-bottom:3%"><span  class="line-center" style="color:gray">эсвэл</span></h2>
-  
-                  <button  ng-click="facebookLogin()" style="background-color:#3b5998;color:white;border-radius:5px;width:100%;padding-bottom:10px;padding-top:10px;border:1px solid #3b5998" > 
-                      <i class="icon ion-social-facebook"></i>&nbsp Login with Facebook</button>
+
+<button  ng-click="facebookLogin()" style="background-color:#3b5998;color:white;border-radius:5px;width:100%;padding-bottom:10px;padding-top:10px;border:1px solid #3b5998" > 
+  <i class="icon ion-social-facebook"></i>&nbsp Login with Facebook</button>
   <h2 style="margin-top:5px;margin-bottom:5px"><span style="color:gray;font-size:14px" class="line-center" ></span> </h2>
-    <div class="row" style="padding:0">
-      <div class="col" style="padding:0;padding-right:5px">
-        <button ui-sref="register" class="lgBtn" style="color:#289BB8;border-color:#289BB8">Бүртгүүлэх</button>
-     </div>
-     <div class="col" style="padding:0;padding-left:5px">
-        <button ui-sref="forgotpassword" class="lgBtn">Нууц үг марсан?</button>
-     </div>
-   </div>
-      </ion-item>
-  </ion-content>
+  <div class="row" style="padding:0">
+    <div class="col" style="padding:0;padding-right:5px">
+      <button ui-sref="register" class="lgBtn" style="color:#289BB8;border-color:#289BB8">Бүртгүүлэх</button>
+    </div>
+    <div class="col" style="padding:0;padding-left:5px">
+      <button ui-sref="forgotpassword" class="lgBtn">Нууц үг марсан?</button>
+    </div>
+  </div>
+</ion-item>
+</ion-content>
 </ion-view>
-	

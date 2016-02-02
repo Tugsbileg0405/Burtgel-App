@@ -22,18 +22,99 @@ myapp.factory('onlineStatus', ["$window", "$rootScope", function ($window, $root
   return onlineStatus;
 }]);
 
-myapp.controller('DashCtrl', function($scope,$rootScope,$timeout,onlineStatus,$ionicPopup,myData,$window,$http,$localStorage,$ionicLoading) {
-
+myapp.controller('DashCtrl', function($scope,$ionicModal,$localStorage,myData,$ionicFilterBar,$rootScope,$timeout,onlineStatus,$ionicPopup,myData,$window,$http,$localStorage,$ionicLoading) {
+ $ionicModal.fromTemplateUrl('templates/addEvent.html', {
+  scope: $scope,
+  animation: 'slide-in-up'
+}).then(function(modal) {
+  $scope.modal = modal;
+});
+$scope.openModal = function() {
+  $scope.modal.show();
+};
+$scope.closeModal = function() {
+  $scope.modal.hide();
+};
+  //Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.modal.remove();
+  });
+  // Execute action on hide modal
+  $scope.$on('modal.hidden', function() {
+    // Execute action
+  });
+  // Execute action on remove modal
+  $scope.$on('modal.removed', function() {
+    // Execute action
+  });
+    $scope.data = {
+    showDelete: false
+  };
+  $scope.onItemDelete = function(event) {
+    $scope.events.splice($scope.events.indexOf(event), 1);
+     var id = event.id;
+     myData.deleteEvent(id).success(function(res){
+        if(res.state == "OK"){
+          $localStorage.events = $scope.events;
+        }
+     })
+  };
   var person = $localStorage.userdata.user.person;
+
+  $scope.event = {};
+  $scope.event.event_start_date = new Date();
+  $scope.event.event_end_date = new Date();
+  $scope.event.event_start_time = new Date();
+  $scope.event.event_title = 'Meeting';
+  $scope.event.event_location = 'Ulaanbaatar';
+  $scope.createEvent = function(data){
+    var mydata = {};
+    mydata = data;
+    mydata.event_isActive = false;
+    mydata.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+    mydata.event_created_by = person.id;
+    mydata.event_all_ticket_remaining = 100;
+    mydata.event_free_ticket_remaining = 100;
+    myData.createEvent(mydata).success(function (response){
+      if(response){
+        var ticketdata = {};
+        ticketdata.type = 'Free';
+        ticketdata.all_count = 100;
+        ticketdata.remaining = 100;
+        ticketdata.description = 'Free Ticket';
+        ticketdata.event_info = response.id;
+        ticketdata.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+        myData.createTicket(ticketdata).success(function(res){
+         $scope.doRefresh();
+         $scope.closeModal();
+       })
+
+      }
+    })
+  }
+  $rootScope.backSite = 'http://www.urilga.mn:1337';
+  $scope.showFilterBar = function () {
+    filterBarInstance = $ionicFilterBar.show({
+     cancelText: "хаах",
+     items: $scope.events,
+     done: function () {
+      $scope.searching = false; 
+    },
+    update: function (filteredItems,filtertext) {
+     $scope.search = filtertext;
+   },
+   cancel: function () {
+    $scope.searching = false; 
+  },
+  filterProperties: 'name'
+});
+  };
   $ionicLoading.show({
     content: 'Loading'
   });
-  $rootScope.backSite = 'http://www.urilga.mn:1337';
-
-
   $scope.doRefresh = function() {
    if(onlineStatus.onLine == true){
-    myData.getEvent(person.id).success(function (response){
+     myData.getEvent(person.id).success(function (response){
       $scope.events = response;
       $localStorage.events = $scope.events;
     }).error(function (data, status, header, config) {
@@ -60,145 +141,360 @@ myapp.controller('DashCtrl', function($scope,$rootScope,$timeout,onlineStatus,$i
  }
 };
 $scope.OnLoad = function(){
-  $scope.events  = $localStorage.events;
-  $ionicLoading.hide();
-  $scope.doRefresh();
+  if($localStorage.events){
+    $scope.events  = $localStorage.events;
+    $ionicLoading.hide();
+    $scope.doRefresh();
+  }
+  else {
+    $scope.doRefresh();
+  }
 }
 $window.onload = $scope.OnLoad();
 })
 
-.controller('allticketCtrl',function($scope,$timeout,$ionicHistory,onlineStatus,myData,$state,$http,$ionicPopup,$ionicLoading,$localStorage,$stateParams,$ionicModal,$ionicTabsDelegate){
-  $ionicModal.fromTemplateUrl('templates/buyTicket.html', {
-    scope: $scope,
-    animation: 'slide-in-up'
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-  $scope.openModal = function() {
-    $scope.modal.show();
-  };
-  $scope.closeModal = function() {
-    $scope.modal.hide();
-  };
-  $scope.add = function(){
-    $scope.ticket_counter += 1;
-  };
-  $scope.sub = function(){
-    if($scope.ticket_counter != 1){
-      $scope.ticket_counter -= 1;
-    }
-  };
-
-  var user_id = $localStorage.userdata.user.person.id;
-  $scope.ticket = {};
-  $scope.ticket.ticket_fullname = "";
-  $scope.ticket.ticket_email="";
-  $scope.ticket.ticket_phonenumber="";
-
-  $scope.suggest = function(ticket){
-    console.log('checked')
-    $scope.ticket.ticket_fullname = $localStorage.userdata.user.person.person_firstname + ' '+ $localStorage.userdata.user.person.person_lastname;
-    $scope.ticket.ticket_email =$localStorage.userdata.user.person.person_email;
-    $scope.ticket.ticket_phonenumber = $localStorage.userdata.user.person.person_cell_number;
+.controller('allticketCtrl',function($scope,$timeout,$ionicFilterBar, $cordovaBarcodeScanner,$ionicHistory,onlineStatus,myData,$state,$http,$ionicPopup,$ionicLoading,$localStorage,$stateParams,$ionicModal,$ionicTabsDelegate){
+ $ionicModal.fromTemplateUrl('templates/buyTicket.html', {
+  scope: $scope,
+  animation: 'slide-in-up'
+}).then(function(modal) {
+  $scope.modal = modal;
+});
+$scope.openBuyTicket = function() {
+  $scope.modal.show();
+};
+$scope.closeBuyTicket = function() {
+  $scope.modal.hide();
+};
+$scope.showFilterBar = function () {
+  filterBarInstance = $ionicFilterBar.show({
+   cancelText: "хаах",
+   items: $scope.events,
+   done: function () {
+    $scope.searching = false; 
+  },
+  update: function (filteredItems,filtertext) {
+   $scope.search = filtertext;
+ },
+ cancel: function () {
+  $scope.searching = false; 
+},
+filterProperties: 'name'
+});
+};
+$ionicModal.fromTemplateUrl('templates/handCheck.html', {
+  scope: $scope,
+  animation: 'slide-in-up'
+}).then(function(handmodal) {
+  $scope.hmodal = handmodal;
+});
+$scope.openHandcheck = function() {
+  $scope.hmodal.show();
+};
+$scope.closeModal = function() {
+  $scope.hmodal.hide();
+};
+$ionicModal.fromTemplateUrl('templates/checkTicket.html', {
+  scope: $scope,
+  animation: 'slide-in-up'
+}).then(function(checkmodal) {
+  $scope.cmodal = checkmodal;
+});
+$scope.openCheckTicket = function() {
+  $scope.cmodal.show();
+};
+$scope.closeCheckTicket = function() {
+  $scope.cmodal.hide();
+};
+$scope.add = function(){
+  $scope.ticket_counter += 1;
+};
+$scope.sub = function(){
+  if($scope.ticket_counter != 1){
+    $scope.ticket_counter -= 1;
   }
+};
+var person = $localStorage.userdata.user.person;
 
-  $scope.clear = function(ticket){
-    console.log('clear');
-    ticket.ticket_fullname = "";
-    ticket.ticket_email = "";
-    ticket.ticket_phonenumber = "";
-  };
-  $scope.check = function(ticket){
-    if($scope.isChecked.checked ==true){
-      $scope.suggest(ticket);
-    }
-    else {
-      $scope.clear(ticket);
-    }
-  }
-  $timeout(function(){
-    $scope.check();
-  },1000);
-  myData.getEventById($stateParams.eventId).success(function (res){
-    $scope.event_info = res;
-    $scope.event_ticket = {};
-    $scope.event_ticket.free = [];
-    $scope.event_ticket.paid = [];
-    $scope.event_ticket.urilga = [];
-    angular.forEach(res.event_ticket_types,function(item){
-      if(item.type == "Paid"){
-        $scope.event_ticket.paid.push(item);
-      }
-      if(item.type == "Free"){
-        $scope.event_ticket.free.push(item);
-      }
-      if(item.type == "Urilga"){
-        $scope.event_ticket.urilga.push(item);
-      }
-    });
-  })
-  $scope.isChecked = {checked: true};
-  $scope.ticket_counter = 1;
-
-  $scope.buyTicket = function(ticket){
-    if(onlineStatus.onLine == true){
-     $ionicLoading.show({
-      content: 'Loading',
-      animation: 'fade-in'
-    });
-     $scope.mydata = ticket;
-     if($scope.ticket_counter > 1){
-      $scope.mydata.ticket_fullname = "";
-    }
-    var etype = JSON.parse(ticket.event_ticket_type);
-    if(etype.type == 'Urilga'){
-      if(etype.urilga_type == undefined){
-        $scope.mydata.ticket_urilga_type = 'basic';
+$scope.checkTicket = function(data){
+  var ticketdata = {};
+  ticketdata.shortId = data.shortCode;
+  ticketdata.createdBy = person.id;
+  ticketdata.eventID= $stateParams.eventId;
+  myData.checkTicketShortIDbyEvent(ticketdata).success(function (result){
+    if(result[0]){
+      if(result[0].ticket_isUsed == true){
+        var alertPopup = $ionicPopup.alert({
+         cssClass :'error',
+         template: 'Ашиглагдсан тасалбар байна.'
+       });
       }
       else {
-       $scope.mydata.ticket_urilga_type = etype.urilga_type;
+       $ionicLoading.show({
+         content: 'Loading'
+       });
+       var updatedata ={};
+       updatedata.id = result[0].id;
+       updatedata.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+       updatedata.ticket_isUsed = true;
+       myData.scanTicket(updatedata).success(function (result){
+        $ionicLoading.hide();
+        var alertPopup = $ionicPopup.alert({
+          cssClass :'success',
+          template: 'Амжилттай бүртгэлээ.'
+        })
+        alertPopup.then(function(){
+          $scope.closeModal();
+        })
+      })
      }
    }
-   $scope.mydata.ticket_type = etype.type;
-   $scope.mydata.ticket_type_model = etype.id;
-   $scope.mydata.ticket_description = etype.description;
-   $scope.mydata.ticket_price = etype.price;
-   $scope.mydata.ticket_countof = $scope.ticket_counter;
-   $scope.mydata.ticket_created_by = user_id;
-   $scope.mydata.____token = 'dXJpbGdhbW5BY2Nlc3M=';
-   $http.get('http://www.urilga.mn:1337/person?person_email='+ticket.ticket_email+'&____token=dXJpbGdhbW5BY2Nlc3M=').success(function (response){
-    person_info = response[0];
-    if(person_info) {
-      $scope.mydata.ticket_event = $stateParams.eventId;
-      $scope.mydata.ticket_user_email = person_info.person_email;
-      $scope.mydata.ticket_user_name = person_info.person_lastname;
-    }
-    else {
-      $scope.mydata.ticket_event = $stateParams.eventId;
-      $scope.mydata.ticket_user_email = $localStorage.userdata.user.person.person_email;
-      $scope.mydata.ticket_user_name  = $localStorage.userdata.user.person.person_lastname;
-    }
-    $http.post('http://www.urilga.mn:1337/ticket',$scope.mydata).success(function (response){
-      if(response.state){
+   else {
+    var alertPopup = $ionicPopup.alert({
+     cssClass :'error',
+     template: 'Буруу код оруулсан байна.'
+   })
+  }
+})
+}
+
+
+
+$scope.scan = function(){
+  if(onlineStatus.onLine == true){
+    $cordovaBarcodeScanner.scan().then(function(barcodeData) {
+     $ionicLoading.show({
+       content: 'Loading'
+     });
+     $scope.ticketid = barcodeData.text;
+     $scope.eventId = $stateParams.eventId;
+     myData.getscanTicketByEvent($scope.eventId).success(function (res) {
+      if(res.length == 0){
         $ionicLoading.hide();
-        var popup = $ionicPopup.alert({
-          template:'Тасалбар авах боломжгүй',
-          cssClass :'error'
-        })
+        var alertPopup = $ionicPopup.alert({
+         cssClass :'error',
+         template: 'Тасалбар байхгүй байна.'
+       })
+        alertPopup.then(function(){
+          $scope.closeCheckTicket()
+        });
       }
-      else {
+      try {  angular.forEach(res , function(ticket){
+        $scope.ticket = ticket;
+        if ($scope.ticket.id == $scope.ticketid){
+          if(ticket.ticket_isUsed == false){
+            throw $scope.isChecker = 0;
+          }
+          if(ticket.ticket_isUsed == true) {
+            throw $scope.isChecker = 1;
+          }
+        }
+        $scope.isNo = true;
+
+      })
+    }
+    catch(e){
+      console.log(e);
+    }
+    if($scope.isChecker == 0){
+      var data = {};
+      data.ticket_isUsed = true;
+      data.id = $scope.ticket.id;
+      data.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+      myData.scanTicket(data).success(function (res){
         $ionicLoading.hide();
-        var popup = $ionicPopup.alert({
-          cssClass: 'success',
-          template:'Худалдан авалт амжилттай боллоо'
-        })
-        popup.then(function() {
-          $scope.closeModal();
-          $state.reload('tab.ticket');
+        if(res.status == true){
+         var alertPopup = $ionicPopup.alert({
+           cssClass :'success',
+           template: 'Амжилттай бүртгэлээ'
+         })
+         alertPopup.then(function(){
+          $scope.closeCheckTicket()
+        });
+       }
+       else {
+        var alertPopup = $ionicPopup.alert({
+         cssClass :'error',
+         template: res.message
+       })
+        alertPopup.then(function(){
+          $scope.closeCheckTicket()
         });
       }
     })
+    }
+    else if($scope.isChecker == 1){
+     $ionicLoading.hide();
+     var alertPopup = $ionicPopup.alert({
+       cssClass :'error',
+       template: 'Ашиглагдсан тасалбар байна та дахин шалгана уу'
+     });
+   }
+   else if ($scope.isNo == true){
+    $ionicLoading.hide();
+   //  var alertPopup = $ionicPopup.alert({
+   //   cssClass :'error',
+   //   template: 'Тийм тасалбар алга та дахин шалгана уу'
+   // });
+  }
+})   
+.error(function (err){
+ $ionicLoading.hide();
+ var alertPopup = $ionicPopup.alert({
+   cssClass :'error',
+   template: 'Та дахин шалгана уу'
+ });
+})
+})
+}
+else if(onlineStatus.onLine == false) {
+  var alertPopup = $ionicPopup.alert({
+   cssClass :'error',
+   template: 'Интернет холболтоо шалгана уу'
+ });
+}
+}
+
+$scope.add = function(){
+  $scope.ticket_counter += 1;
+};
+$scope.sub = function(){
+  if($scope.ticket_counter != 1){
+    $scope.ticket_counter -= 1;
+  }
+};
+
+var user_id = $localStorage.userdata.user.person.id;
+$scope.ticket = {};
+$scope.ticket.ticket_fullname = "";
+$scope.ticket.ticket_email="";
+$scope.ticket.ticket_phonenumber="";
+
+$scope.suggest = function(ticket){
+  console.log('checked')
+  $scope.ticket.ticket_fullname = $localStorage.userdata.user.person.person_firstname + ' '+ $localStorage.userdata.user.person.person_lastname;
+  $scope.ticket.ticket_email =$localStorage.userdata.user.person.person_email;
+  $scope.ticket.ticket_phonenumber = $localStorage.userdata.user.person.person_cell_number;
+}
+
+$scope.clear = function(ticket){
+  console.log('clear');
+  ticket.ticket_fullname = "";
+  ticket.ticket_email = "";
+  ticket.ticket_phonenumber = "";
+};
+$scope.check = function(ticket){
+  if($scope.isChecked.checked ==true){
+    $scope.suggest(ticket);
+  }
+  else {
+    $scope.clear(ticket);
+  }
+}
+$timeout(function(){
+  $scope.check();
+},1000);
+var events = $localStorage.events;
+angular.forEach(events,function(event){
+  if(event.id == $stateParams.eventId){
+   $scope.event_info = event;
+   $scope.event_ticket = {};
+   $scope.event_ticket.free = [];
+   $scope.event_ticket.paid = [];
+   $scope.event_ticket.urilga = [];
+   angular.forEach(event.event_ticket_types,function(item){
+    if(item.type == "Paid"){
+      $scope.event_ticket.paid.push(item);
+    }
+    if(item.type == "Free"){
+      $scope.event_ticket.free.push(item);
+    }
+    if(item.type == "Urilga"){
+      $scope.event_ticket.urilga.push(item);
+    }
   });
+ }
+})
+// myData.getEventById($stateParams.eventId).success(function (res){
+//   $scope.event_info = res;
+//   $scope.event_ticket = {};
+//   $scope.event_ticket.free = [];
+//   $scope.event_ticket.paid = [];
+//   $scope.event_ticket.urilga = [];
+//   angular.forEach(res.event_ticket_types,function(item){
+//     if(item.type == "Paid"){
+//       $scope.event_ticket.paid.push(item);
+//     }
+//     if(item.type == "Free"){
+//       $scope.event_ticket.free.push(item);
+//     }
+//     if(item.type == "Urilga"){
+//       $scope.event_ticket.urilga.push(item);
+//     }
+//   });
+// })
+$scope.isChecked = {checked: true};
+$scope.ticket_counter = 1;
+
+$scope.buyTicket = function(ticket){
+  if(onlineStatus.onLine == true){
+   $ionicLoading.show({
+    content: 'Loading',
+    animation: 'fade-in'
+  });
+   $scope.mydata = ticket;
+   if($scope.ticket_counter > 1){
+    $scope.mydata.ticket_fullname = "";
+  }
+  var etype = JSON.parse(ticket.event_ticket_type);
+  if(etype.type == 'Urilga'){
+    if(etype.urilga_type == undefined){
+      $scope.mydata.ticket_urilga_type = 'basic';
+    }
+    else {
+     $scope.mydata.ticket_urilga_type = etype.urilga_type;
+   }
+ }
+ $scope.mydata.ticket_type = etype.type;
+ $scope.mydata.ticket_type_model = etype.id;
+ $scope.mydata.ticket_description = etype.description;
+ $scope.mydata.ticket_price = etype.price;
+ $scope.mydata.ticket_countof = $scope.ticket_counter;
+ $scope.mydata.ticket_created_by = user_id;
+ $scope.mydata.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+ $http.get('http://www.urilga.mn:1337/person?person_email='+ticket.ticket_email+'&____token=dXJpbGdhbW5BY2Nlc3M=').success(function (response){
+  person_info = response[0];
+  if(person_info) {
+    $scope.mydata.ticket_event = $stateParams.eventId;
+    $scope.mydata.ticket_user_email = person_info.person_email;
+    $scope.mydata.ticket_user_name = person_info.person_lastname;
+  }
+  else {
+    $scope.mydata.ticket_event = $stateParams.eventId;
+    $scope.mydata.ticket_user_email = $localStorage.userdata.user.person.person_email;
+    $scope.mydata.ticket_user_name  = $localStorage.userdata.user.person.person_lastname;
+  }
+  $http.post('http://www.urilga.mn:1337/ticket',$scope.mydata).success(function (response){
+    if(response.state){
+      $ionicLoading.hide();
+      var popup = $ionicPopup.alert({
+        template:'Тасалбар авах боломжгүй',
+        cssClass :'error'
+      })
+    }
+    else {
+      $ionicLoading.hide();
+      var popup = $ionicPopup.alert({
+        cssClass: 'success',
+        template:'Худалдан авалт амжилттай боллоо'
+      })
+      popup.then(function() {
+        $scope.closeBuyTicket();
+        $state.reload();
+      });
+    }
+  })
+});
 }
 else if(onlineStatus.onLine == false) {
   $ionicLoading.hide();
@@ -210,7 +506,11 @@ else if(onlineStatus.onLine == false) {
 }
 
 $scope.eventid = $stateParams.eventId;
-console.log($scope.eventid);
+$scope.doRefresh = function(){
+  myData.getTicket($scope.eventid).success(function (res){
+    console.log(res);
+  })
+}
 $scope.goForward = function () {
   var selected = $ionicTabsDelegate.selectedIndex();
   if (selected != -1) {
@@ -225,7 +525,7 @@ $scope.goBack = function () {
   }
 }
 })
-.controller('searchCtrl', function($scope,$state,myData,$ionicLoading,onlineStatus,$ionicHistory,$ionicModal,$ionicPopup,$cordovaSms,$ionicPopup,myData,$ionicPopover,$http,$stateParams,$localStorage,$ionicLoading) {
+.controller('searchCtrl', function($scope,$ionicHistory,$ionicFilterBar,$state,myData,$ionicLoading,onlineStatus,$ionicHistory,$ionicModal,$ionicPopup,$cordovaSms,$ionicPopup,myData,$ionicPopover,$http,$stateParams,$localStorage,$ionicLoading) {
   var id = $stateParams.eventId;
   myData.getTicket(id).success(function (res){
     $scope.searchTickets = res;
@@ -234,7 +534,27 @@ $scope.goBack = function () {
   $scope.clear = function(){
    $scope.search = "";
  };
- $scope.searchTitle = function(data){
+ $scope.goBack = function() {
+  $ionicHistory.goBack();
+}
+$scope.showFilterBar = function () {
+  filterBarInstance = $ionicFilterBar.show({
+   cancelText: "хаах",
+   items: $scope.searchTickets,
+   done: function () {
+    $scope.searching = false; 
+  },
+  update: function (filteredItems,filtertext) {
+   $scope.search = filtertext;
+   console.log(filteredItems);
+ },
+ cancel: function () {
+  $scope.searching = false; 
+},
+filterProperties: 'name'
+});
+};
+$scope.searchTitle = function(data){
   $ionicLoading.show({
     content: 'Loading',
     animation: 'fade-in'
@@ -318,10 +638,7 @@ $scope.send = function(data){
       okType :'success'
     })
   }, function(error) {
-    var popup = $ionicPopup.alert({
-      template:'Амжилтгүй',
-      okType :'error'
-    })
+    $ionicLoading.hide();
   });
 
 }
@@ -343,7 +660,7 @@ $scope.checkTicket = function(data){
           if(res.status == true) {
             $ionicLoading.hide();
             var alertPopup = $ionicPopup.alert({
-             okType :'success',
+             cssClass :'success',
              template: 'Амжилттай бүртгэгдлээ'
            });
             alertPopup.then(function(res) {
@@ -376,12 +693,26 @@ $scope.checkTicket = function(data){
 })
 
 
-.controller('ticketCtrl', function($scope,$window,$rootScope,$localStorage,filterFilter,$ionicPopover,$timeout,$ionicLoading,myData,onlineStatus,$ionicHistory,$stateParams,$ionicPopup,$ionicLoading) {
+.controller('ticketCtrl', function($scope,$window,$ionicFilterBar,$rootScope,$localStorage,filterFilter,$ionicPopover,$timeout,$ionicLoading,myData,onlineStatus,$ionicHistory,$stateParams,$ionicPopup,$ionicLoading) {
+  $scope.showFilterBar = function () {
+    filterBarInstance = $ionicFilterBar.show({
+     cancelText: "хаах",
+     items: $scope.tickets,
+     done: function () {
+      $scope.searching = false; 
+    },
+    update: function (filteredItems,filtertext) {
+     $scope.search = filtertext;
+     console.log(filteredItems);
+   },
+   cancel: function () {
+    $scope.searching = false; 
+  },
+  filterProperties: 'name'
+});
+  };
   var id = $stateParams.eventId;
   $scope.eventid = $stateParams.eventId;
-  $ionicLoading.show({
-    content: 'Loading'
-  });
   $scope.sortType     = 'ticket_user_email'; 
   $scope.sortReverse  =  false;
   $scope.counter = 0;
@@ -390,6 +721,7 @@ $scope.checkTicket = function(data){
   { text:"Z-A",name: "upName", icon: 'fa-sort-alpha-desc'}
   ];
   $scope.sortTicketType = [
+  {text:'Бүх тасалбар',eventType: 'All'},
   { text:"Үнэгүй",eventType: "Free"},
   { text:"Үнэтэй",eventType: "Paid"},
   { text:"Урилга",eventType: "Urilga"}
@@ -404,7 +736,6 @@ $scope.checkTicket = function(data){
       console.log(response);
     })
   }
-
   $scope.sortByName = function(data){
     console.log(data.name);
     delete data.eventType;
@@ -453,6 +784,7 @@ $scope.checkTicket = function(data){
     $scope.ticket_type.freeticket=[];
     $scope.ticket_type.urilgaticket = [];
     $scope.ticket_type.paidticket = [];
+    $scope.tickets = $localStorage.tickets;
     angular.forEach($scope.tickets, function (item){
       if(item.ticket_type == 'Free'){
         $scope.ticket_type.freeticket.push(item)
@@ -465,72 +797,75 @@ $scope.checkTicket = function(data){
       }
     })
     if(data.eventType == 'Free'){
-      $scope.counter = 1;
+      $scope.tickets = $scope.ticket_type.freeticket;
     }
     else if (data.eventType == 'Paid'){
-      $scope.counter = 2;
+      $scope.tickets = $scope.ticket_type.paidticket;
     }
     else if (data.eventType == 'Urilga') {
-     $scope.counter = 3
+     $scope.tickets = $scope.ticket_type.urilgaticket;
    }
-   $scope.hide();
- }
+   else if (data.eventType == 'All'){
+    $scope.tickets = $localStorage.tickets;
+  }
+  $scope.hide();
+}
 
- $scope.sortBy = function(data){
-   $ionicLoading.show({
-    content: 'Loading'
-  });
-   console.log(data);
-   console.log(data[Object.keys(data)[0 ]]);
-   angular.forEach(data, function(value, key) {
-    if(value != ""){
-     console.log(key + ': ' + value);
+$scope.sortBy = function(data){
+ $ionicLoading.show({
+  content: 'Loading'
+});
+ console.log(data);
+ console.log(data[Object.keys(data)[0 ]]);
+ angular.forEach(data, function(value, key) {
+  if(value != ""){
+   console.log(key + ': ' + value);
 
-     if(value == 'downName'){
-      delete data.name;
-      delete data.email;
-      delete data.number ;
-      delete data.ticketType;
-      $scope.sortReverse  =  false;
-      $scope.sortType = 'ticket_user.person_firstname';
-    }
-    else if(value == 'upName' ){
-     delete data.name;
-     delete data.email;
-     delete data.number ;
-     delete data.ticketType;
-     $scope.counter = 0;
-     $scope.sortReverse  =  true;
-     $scope.sortType = 'ticket_user.person_firstname';
-   }
-   else if(value == 'downEmail'){
-     delete data.name;
-     delete data.email;
-     delete data.number ;
-     delete data.ticketType;
-     $scope.counter = 0;
-     $scope.sortReverse  =  false;
-     $scope.sortType = 'ticket_user.person_email';
-   }
-   else if(value == 'upEmail'){
+   if(value == 'downName'){
     delete data.name;
     delete data.email;
     delete data.number ;
     delete data.ticketType;
-    $scope.counter = 0;
-    $scope.sortReverse  =  true;
-    $scope.sortType = 'ticket_user.person_email';
+    $scope.sortReverse  =  false;
+    $scope.sortType = 'ticket_user.person_firstname';
   }
-  else if(value == 'downNumber'){
+  else if(value == 'upName' ){
    delete data.name;
    delete data.email;
    delete data.number ;
    delete data.ticketType;
    $scope.counter = 0;
-   $scope.sortType = 'ticket_countof';
-   $scope.sortReverse  =  false;
+   $scope.sortReverse  =  true;
+   $scope.sortType = 'ticket_user.person_firstname';
  }
- else if(value== 'upNumber'){
+ else if(value == 'downEmail'){
+   delete data.name;
+   delete data.email;
+   delete data.number ;
+   delete data.ticketType;
+   $scope.counter = 0;
+   $scope.sortReverse  =  false;
+   $scope.sortType = 'ticket_user.person_email';
+ }
+ else if(value == 'upEmail'){
+  delete data.name;
+  delete data.email;
+  delete data.number ;
+  delete data.ticketType;
+  $scope.counter = 0;
+  $scope.sortReverse  =  true;
+  $scope.sortType = 'ticket_user.person_email';
+}
+else if(value == 'downNumber'){
+ delete data.name;
+ delete data.email;
+ delete data.number ;
+ delete data.ticketType;
+ $scope.counter = 0;
+ $scope.sortType = 'ticket_countof';
+ $scope.sortReverse  =  false;
+}
+else if(value== 'upNumber'){
   delete data.name;
   delete data.email;
   delete data.number ;
@@ -546,11 +881,12 @@ $ionicLoading.hide();
 }
 $scope.backsite = 'http://www.urilga.mn:1337';
 $scope.doRefresh = function() {
-  if(onlineStatus.onLine == true){
+ if(onlineStatus.onLine == true){
    myData.getTicket($stateParams.eventId).success(function (response){
-    $scope.tickets = response;
-    $ionicLoading.hide();
-  })
+     $ionicLoading.hide();
+     $scope.tickets = response;
+     $localStorage.tickets = $scope.tickets;
+   })
    .finally(function() {
      $scope.$broadcast('scroll.refreshComplete');
      $scope.counter = 0;
@@ -567,8 +903,10 @@ $scope.doRefresh = function() {
  });
 }
 };
-
-
+$scope.$watch('tickets',function(newVal,oldVal){
+  $scope.tickets = newVal;
+  console.log($scope.tickets);
+})
 $scope.getUsed = function() {
  myData.getTicket($stateParams.eventId).success(function (response){
   $scope.tickets = response;
@@ -583,8 +921,7 @@ $scope.getUsed = function() {
 })
 };
 
-window.onload =$scope.getUsed();
-$window.onload= $scope.doRefresh();
+window.onload= $scope.doRefresh();
 $scope.checkUsed = function(){
   myData.getTicket($stateParams.eventId).success(function (response){
     $scope.usedCounter = [];
@@ -769,7 +1106,7 @@ else if(onlineStatus.onLine == false) {
 
   $scope.Register = function(data) {
     if(onlineStatus.onLine == true){
-      if (!data || !data.fname || !data.uname || !data.pass || !data.email || !data.phone ) {
+      if (!data || !data.fname || !data.pass || !data.email || !data.phone ) {
        var alertPopup = $ionicPopup.alert({
          template: 'Бүх талбарыг бөглөнө үү',
          cssClass : 'error'
@@ -780,7 +1117,7 @@ else if(onlineStatus.onLine == false) {
         content: 'Loading',
         animation: 'fade-in'
       });
-      $http.post("http://www.urilga.mn:1337/person", {____token:'dXJpbGdhbW5BY2Nlc3M=',person_firstname:data.fname,person_lastname:data.uname,person_email:data.email,person_cell_number:data.phone,person_profile_img:$scope.pictureURL}).success(function (response) {
+      $http.post("http://www.urilga.mn:1337/person", {____token:'dXJpbGdhbW5BY2Nlc3M=',person_firstname:data.fname,person_email:data.email,person_cell_number:data.phone,person_profile_img:$scope.pictureURL}).success(function (response) {
         if(response.error){
           $ionicLoading.hide();
           var alertPopup = $ionicPopup.alert({
@@ -805,12 +1142,25 @@ else if(onlineStatus.onLine == false) {
                cssClass :'success'
              });
               alertPopup.then(function(res) {
-               $state.go('login',{},{reload:true});
-             });
+                $http.post("http://www.urilga.mn:1337/login",{email:data.email,password:data.pass}).success(function (response){
+                 if(response.status == true){
+                  $localStorage.userdata = response;
+                  $ionicLoading.hide();
+                  $state.go('tab.dash',{},{reload:true});
+                }
+                else {
+                  $ionicLoading.hide();
+                  var popup = $ionicPopup.alert({
+                    cssClass: 'error',
+                    template: response.message
+                  })
+                }
+              })
+              });
             }
           })
-        }
-      })
+}
+})
 }  
 }
 else if(onlineStatus.onLine == false) {
@@ -824,9 +1174,6 @@ else if(onlineStatus.onLine == false) {
 .controller('notusedTicketCtrl', function($scope,$ionicLoading,$cordovaSms,$ionicHistory,$ionicPopup,$state,$ionicModal,myData,onlineStatus,$ionicLoading,$ionicHistory,$localStorage,$stateParams,$state) {
   var id = $stateParams.eventId;
   $scope.eventid = $stateParams.eventId;
-  $ionicLoading.show({
-    content: 'Loading'
-  });
   $scope.backsite = 'http://www.urilga.mn:1337';
   $scope.openModal = function() {
     $scope.modal.show();
@@ -1113,11 +1460,7 @@ else if(onlineStatus.onLine == false) {
 })
 
 .controller('usedTicketCtrl', function($scope,$ionicLoading,myData,onlineStatus,$ionicPopup,$ionicLoading,$ionicHistory,$localStorage,$stateParams,$state) {
-  $ionicLoading.show({
-   content: 'Loading'
- });
   $scope.backsite = 'http://www.urilga.mn:1337';
-
   $scope.doRefresh = function() {
     if(onlineStatus.onLine == true){
      myData.getTicket($stateParams.eventId).success(function (response){
@@ -1363,5 +1706,13 @@ $scope.changepass = function(data){
 }
 };
 })
-
+.controller('searchByEventCtrl',function($scope,$localStorage,$state,$ionicHistory){
+  $scope.clear = function(){
+   $scope.search = "";
+ };
+ $scope.myGoBack = function() {
+  $ionicHistory.goBack();
+};
+$scope.events = $localStorage.events;
+})
 ;

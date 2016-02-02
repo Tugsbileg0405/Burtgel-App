@@ -1,37 +1,51 @@
 <ion-view view-title="Арга хэмжээ">
-   <ion-nav-bar class="bar custom-color">
-    </ion-nav-bar>
-  <ion-content lazy-scroll overflow-scroll='true' >
-   <ion-refresher
-    on-refresh="doRefresh()">
-  </ion-refresher>
-        <div ng-repeat="event in events"  class="animate-rip">
-          <div class="list" style="border-bottom:1px solid #f8f8f8">
-		    <a class="item item-thumbnail-left" id="myEvent" href="#/tab/dash/{{event.id}}/all">
-		      <img ng-cache ng-src="{{backSite}}/{{event.event_cover}}" >
-		      <h2 id="eventTitle">{{event.event_title}}</h2>
-          <div class="row" style="padding:0 0 5px 0">
-              <div class="col col-10" style="padding:0">
-                <p class="eventText"><i class="icon ion-ios-clock-outline"></i></p>
-              </div>
-              <div class="col col-90" style="padding:0">
-                <p class="eventText"> {{event.event_start_date | date:'EEEE, MMMM d, y '}}</p>
-              </div>
-          </div>
-             <div class="row" style="padding:0 0 5px 0">
-              <div class="col col-10" style="padding:0">
-                <p class="eventText"><i class="icon ion-ios-location-outline"></i> </p>
-              </div>
-              <div class="col col-90" style="padding:0">
-                <p class="eventText"> {{event.event_location}}</p>
-              </div>
-          </div>
-		    </a>
-		</div>
+<ion-nav-bar class="bar custom-color">
+<ion-nav-buttons side="left">
+<button class="button button-clear" ng-click="openModal()" style="color:white" >
+  <i class="icon ion-ios-plus-outline" style="padding:0 5px 0 5px"></i>
+</button>
+<button class="button button-clear button-icon icon ion-ios-trash-outline"
+          ng-click="data.showDelete = !data.showDelete; data.showReorder = false"></button>
+</ion-nav-buttons>
+<ion-nav-buttons side="secondary">
+<button class="button button-clear" ng-click="showFilterBar()" style="color:white" >
+  <i class="icon ion-ios-search" style="padding:0 5px 0 5px"></i>
+</button>
+</ion-nav-buttons>
+</ion-nav-bar>
+<ion-content lazy-scroll overflow-scroll='true' >
+<ion-refresher
+on-refresh="doRefresh()">
+</ion-refresher>
+  <ion-list show-delete="data.showDelete" style="border-bottom:1px solid #f8f8f8">
+    <ion-item  ng-repeat="event in events| toArray:false | filter: search | orderBy:createdAt:true"  show-delete="shouldShowDelete" class="item item-thumbnail-left" id="myEvent" href="#/tab/dash/{{event.id}}/all">
+      <img ng-cache ng-src="{{backSite}}/{{event.event_cover}}" ng-if="event.event_cover.length < 50">
+      <img ng-cache ng-src="{{event.event_cover}}" ng-if="event.event_cover.length > 50">
+      <h2 id="eventTitle">{{event.event_title}}</h2>
+      <div class="row" style="padding:0 0 5px 0">
+        <div class="col col-10" style="padding:0">
+          <p class="eventText"><i class="icon ion-ios-clock-outline"></i></p>
         </div>
-          <div class="list card" ng-if="events.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:20px">
-          Арга хэмжээ байхгүй байна.
+        <div class="col col-90" style="padding:0">
+          <p class="eventText"> {{event.event_start_date | date:'EEEE, MMMM d, y '}}</p>
         </div>
-  </ion-content>
-  
+      </div>
+      <div class="row" style="padding:0 0 5px 0">
+        <div class="col col-10" style="padding:0">
+          <p class="eventText"><i class="icon ion-ios-location-outline"></i> </p>
+        </div>
+        <div class="col col-90" style="padding:0">
+          <p class="eventText"> {{event.event_location}}</p>
+        </div>
+      </div>
+      <ion-delete-button class="ion-minus-circled button-clear" style="border:none !important;padding-left:10px;margin-top:25px;height:100%"
+       ng-click="onItemDelete(event)">
+    </ion-delete-button>
+    </ion-item>
+    </ion-list>
+<div class="list card" ng-if="events.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:20px">
+  Арга хэмжээ байхгүй байна.
+</div>
+
+</ion-content>
 </ion-view>

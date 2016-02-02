@@ -6,9 +6,9 @@
   <ion-content>
     <ion-list>
 
-   <div class="item" style="padding:0;margin-bottom:0;border:none">
+   <div class="item"  style="padding:0;margin-bottom:0;border:none">
           <img src="img/Mobile Cover.png"  style="width:100%;height:150px">
-             <div class="profile-picture big-profile-picture" ng-click="show($event)" >
+             <div  class="profile-picture big-profile-picture" ng-click="show($event)" >
             <img fallback-src="{{backsite}}/{{userInfo.person_profile_img}}"  ng-if="userInfo.person_profile_img" ng-src="{{userInfo.person_profile_img}}">
              <img ng-if="!userInfo.person_profile_img" ng-src="{{pictureURL}}">
           </div>
@@ -17,15 +17,15 @@
         </div>
    <div class="list" id="proInfo">
    <div class="item">
-  <label class="item item-input">
+  <label class="item item-input" >
     <span class="input-label">Нэр:</span>
     <input type="text" ng-value='userInfo.person_firstname+userInfo.person_lastname' disabled>
   </label>
-    <label class="item item-input">
+    <label class="item item-input" ng-if="userInfo.person_email">
     <span class="input-label">И-мэйл:</span>
     <input type="text" ng-value="userInfo.person_email" disabled>
   </label>
-  <label class="item item-input">
+  <label class="item item-input" ng-if="userInfo.person_cell_number">
     <span class="input-label">Утас:</span>
     <input type="text" ng-value="userInfo.person_cell_number" disabled>
   </label>

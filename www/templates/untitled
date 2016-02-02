@@ -1,0 +1,7 @@
+  <button class="button button-clear button-dark"  ng-click="myGoBack()"  style="color:black"><i class="icon ion-ios-arrow-back"></i></button>
+  <label class="item item-input" id="search">
+    <i class="fa fa-search placeholder-icon"></i>
+    <input type="text" placeholder="Хайх утгаа оруулна уу" ng-model="search">
+  </label>
+  <button class="button button-clear button-dark"  ng-click="clear()" ng-show="search.length" id="clearButton" style="color:black"><i class="icon ion-ios-close-outline"></i></button>
+</div>

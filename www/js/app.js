@@ -5,13 +5,11 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ngResource','angular.filter','ionicProcessSpinner','ionicLazyLoad','ngMaterial','ionic-material','starter.controllers','starter.services','starter.auth','ngStorage','ngCordova'])
+angular.module('starter', ['ionic','ti-segmented-control','angularMoment','ImgCache','ngResource','angular.filter','ionicProcessSpinner','jett.ionic.filter.bar','ionicLazyLoad','ngMaterial','ionic-material','starter.controllers','starter.services','starter.auth','ngStorage','ngCordova'])
 
-.run(function($ionicPlatform,AuthService,$rootScope,$state,$ionicLoading,$ionicPopup) {
-
+.run(function($ionicPlatform,AuthService,ImgCache,$rootScope,$state,$ionicLoading,$ionicPopup) {
  $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromStateParams) {
   if(toState.name.indexOf('tab') !== -1 ) {
-
     if(!AuthService.getAuthStatus()) {
       event.preventDefault();
       $state.go('login',{},{reload:true});
@@ -19,17 +17,9 @@ angular.module('starter', ['ionic','ngResource','angular.filter','ionicProcessSp
 
   }
 })
- ImgCache.options.debug = true;
- ImgCache.options.chromeQuota = 50*1024*1024;  
- 
- ImgCache.init(function() {
-  console.log('ImgCache init: success!');
-}, function(){
-  console.log('ImgCache init: error! Check the log for errors');
-});
+
  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
+     ImgCache.$init();
  if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
   cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
   cordova.plugins.Keyboard.disableScroll(true);
@@ -39,7 +29,6 @@ if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleLightContent();
     }
-
     $ionicPlatform.registerBackButtonAction(function(){
       if($state.current.name == 'tab.dash'){
         navigator.app.exitApp();
@@ -66,128 +55,165 @@ if (window.StatusBar) {
   });
 })
 
-.config(function($stateProvider,$httpProvider,$mdGestureProvider,$urlRouterProvider,$ionicConfigProvider) {
+.config(function($stateProvider,$provide,$ionicFilterBarConfigProvider,ImgCacheProvider,$httpProvider,$mdGestureProvider,$urlRouterProvider,$ionicConfigProvider) {
+   $provide.decorator('$state',
+        ["$delegate", "$stateParams", '$timeout', function ($delegate, $stateParams, $timeout) {
+            $delegate.forceReload = function () {
+                var reload = function () {
+                    $delegate.transitionTo($delegate.current, angular.copy($stateParams), {
+                        reload: true,
+                        inherit: true,
+                        notify: true
+                    })
+                };
+                reload();
+                $timeout(reload, 100);
+            };
+            return $delegate;
+        }]);
+ ImgCacheProvider.setOption('debug', true);
+ ImgCacheProvider.setOption('usePersistentCache', true);
+ ImgCacheProvider.setOptions({
+  debug: true,
+  usePersistentCache: true
+});
+ ImgCacheProvider.manualInit = true;
 
-  $httpProvider.defaults.timeout = 5000;
-  $ionicConfigProvider.views.transition('android');
-  $mdGestureProvider.skipClickHijack();
-  $ionicConfigProvider.tabs.position('bottom');
-  $ionicConfigProvider.navBar.alignTitle('center');
-  $ionicConfigProvider.form.checkbox('square');
-  $ionicConfigProvider.backButton.icon('ion-ios-arrow-back');
-  $ionicConfigProvider.form.toggle('large');
-  $stateProvider
+ $ionicFilterBarConfigProvider.clear('ion-ios-close-outline');
+  $ionicFilterBarConfigProvider.theme('custom');
+ $httpProvider.defaults.timeout = 5000;
+ $mdGestureProvider.skipClickHijack();
+ $ionicConfigProvider.tabs.position('bottom');
+ $ionicConfigProvider.navBar.alignTitle('center');
+ $ionicConfigProvider.views.maxCache(10);
+ $ionicConfigProvider.views.transition('none');
+ $ionicConfigProvider.views.forwardCache(true);
+ $ionicConfigProvider.form.checkbox('square');
+ $ionicConfigProvider.backButton.icon('ion-ios-arrow-back');
+ $ionicConfigProvider.form.toggle('large');
+ $stateProvider
 
-  .state('login', {
-    url: '/login',
-    templateUrl: 'templates/login.html',
-    controller: 'loginCtrl'
-  })
-  .state('register', {
-    url: '/register',
-    templateUrl: 'templates/register.html',
-    controller: 'registerCtrl'
-  })
-  .state('tab', {
-    url: '/tab',
-    abstract: true,
-    templateUrl: 'templates/tabs.html'
-  })
-  .state('forgotpassword',{
-    url: '/forgotpassword',
-    templateUrl:'templates/forgotpassword.html',
-    controller:'ForgotPasswordCtrl'
-  })
+ .state('login', {
+  url: '/login',
+  templateUrl: 'templates/login.html',
+  controller: 'loginCtrl'
+})
+ .state('register', {
+  url: '/register',
+  templateUrl: 'templates/register.html',
+  controller: 'registerCtrl'
+})
+ .state('tab', {
+  url: '/tab',
+  abstract: true,
+  templateUrl: 'templates/tabs.html'
+})
+ .state('forgotpassword',{
+  url: '/forgotpassword',
+  templateUrl:'templates/forgotpassword.html',
+  controller:'ForgotPasswordCtrl'
+})
 
 
-  .state('tab.dash', {
-    url: '/dash',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
-      }
+ .state('tab.dash', {
+  url: '/dash',
+  views: {
+    'tab-dash': {
+      templateUrl: 'templates/tab-dash.html',
+      controller: 'DashCtrl'
     }
-  })
-  .state('tab.ticket', {
-    url: '/dash/:eventId',
-    views: {
-      'tab-dash':{
-        templateUrl: 'templates/tickets.html',
-        controller: 'allticketCtrl'
-      }
+  }
+})
+ .state('tab.ticket', {
+  url: '/dash/:eventId',
+  views: {
+    'tab-dash':{
+      templateUrl: 'templates/tickets.html',
+      controller: 'allticketCtrl'
     }
-  })
-  .state('tab.ticket.all',{
-    url:'/all',
-    views:{
-      'tab-dash-1': {
-        templateUrl:'templates/chat-detail.html',
-        controller:'ticketCtrl'
-      }
+  }
+})
+ .state('tab.ticket.all',{
+  url:'/all',
+  views:{
+    'tab-dash-1': {
+      templateUrl:'templates/chat-detail.html',
+      controller:'ticketCtrl'
     }
-  })
-  .state('tab.ticket.used',{
-    url:'/used',
-    views:{
-      'tab-dash-2': {
-        templateUrl:'templates/used.html',
-        controller:'usedTicketCtrl'
-      }
+  }
+})
+ .state('tab.ticket.used',{
+  url:'/used',
+  views:{
+    'tab-dash-2': {
+      templateUrl:'templates/used.html',
+      controller:'usedTicketCtrl'
     }
-  })
-  .state('tab.ticket.notused',{
-    url:'/notused',
-    views:{
-      'tab-dash-3': {
-        templateUrl:'templates/notused.html',
-        controller:'notusedTicketCtrl'
-      }
+  }
+})
+ .state('tab.ticket.notused',{
+  url:'/notused',
+  views:{
+    'tab-dash-3': {
+      templateUrl:'templates/notused.html',
+      controller:'notusedTicketCtrl'
     }
-  })
+  }
+})
+ .state('tab.searchEvent', {
+  url: '/dash/searchByEvent',
+  views: {
+    'tab-dash':{
+      templateUrl: 'templates/searchByEvent.html',
+      controller: 'searchByEventCtrl'
+    }
+  }
+})
+ .state('tab.search', {
+  url: '/dash/:eventId/search',
+  views: {
+    'tab-dash':{
+      templateUrl: 'templates/search.html',
+      controller: 'searchCtrl'
+    }
+  }
+})
+ .state('tab.used', {
+  url: '/dash/:eventId/used',
+  views: {
+    'tab-dash':{
+      templateUrl: 'templates/used.html',
+      controller: 'usedTicketCtrl'
+    }
+  }
+})
 
-  .state('tab.search', {
-    url: '/dash/:eventId/search',
-    views: {
-      'tab-dash':{
-        templateUrl: 'templates/search.html',
-        controller: 'searchCtrl'
-      }
+ .state('tab.chats', {
+  url: '/chats',
+  views: {
+    'tab-chats': {
+      templateUrl: 'templates/tab-chats.html',
+      controller: 'ChatsCtrl'
     }
-  })
-  .state('tab.used', {
-    url: '/dash/:eventId/used',
-    views: {
-      'tab-dash':{
-        templateUrl: 'templates/used.html',
-        controller: 'usedTicketCtrl'
-      }
-    }
-  })
-  
-  .state('tab.chats', {
-    url: '/chats',
-    views: {
-      'tab-chats': {
-        templateUrl: 'templates/tab-chats.html',
-        controller: 'ChatsCtrl'
-      }
-    }
-  })
+  }
+})
 
-  .state('tab.account', {
-    url: '/account',
-    views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
-      }
+ .state('tab.account', {
+  url: '/account',
+  views: {
+    'tab-account': {
+      templateUrl: 'templates/tab-account.html',
+      controller: 'AccountCtrl'
     }
-  })
-  ;
+  }
+})
+ ;
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/dash');
+    $urlRouterProvider.otherwise(function($injector, $location){
+      var $state = $injector.get("$state");
+      $state.go('tab.dash');
+  });
 
 
 })

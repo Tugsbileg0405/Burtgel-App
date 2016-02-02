@@ -29,11 +29,15 @@
   </ion-tab>
 </ion-tabs>
 </ion-pane>
-   <ion-footer-bar align-title="left" ng-click="openModal()">
-  <h1 class="title" style="color:#289BB8">Тасалбар худалдан авах</h1>
-  <div class="buttons" ng-click="openModal()">
-    <button class="button button-light" style="border:1px solid #289BB8;color:#289BB8;padding-left:10px;padding-right:10px"><i class="icon ion-card"></i></button>
-  </div>
+   <ion-footer-bar  >
+       <div class="tabs tabs-bottom">
+        <a class="tab-item" ng-click="openCheckTicket()">
+          Тасалбар шалгах
+        </a>
+        <a class="tab-item" ng-click="openBuyTicket()">
+          Худалдан авах
+        </a>
+      </div>
 </ion-footer-bar>
 </ion-view>
 

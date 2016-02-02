@@ -1,23 +1,21 @@
- <ion-view title="{{usedTickets.length}} ширхэг"  left-buttons="leftButtons" >
-  <ion-content overflow-scroll='true' >
-   <ion-refresher
-    on-refresh="doRefresh()">
-  </ion-refresher>
-  <div ng-repeat="ticket in usedTickets  | orderBy:'ticket_user.person_firstname'">
-  
-             <span id="used" ng-show="ticket.ticket_isUsed == true"><p>Ашиглагдсан</p></span>
-             <ion-checkbox class="checkbox-positive" id="check" ng-checked="ticket.ticket_isUsed" ng-model="ticket.ticket_isUsed" ng-click="isChecked(ticket)">
-              <a class="item" id="profile" >
+ <ion-view title="{{usedTickets.length}} ширхэг" left-buttons="leftButtons" >
+ <ion-content overflow-scroll='true' >
+ <ion-refresher
+ on-refresh="doRefresh()">
+</ion-refresher>
+<div ng-repeat="ticket in usedTickets  | orderBy:'ticket_user.person_firstname'">
+ <ion-item  id="check"  ng-model="ticket.ticket_isUsed">
+ <a class="item" id="profile" >
   <img ng-if="!ticket.ticket_user.person_profile_img" src="img/default.png" >
-              <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img"  ng-src="{{ticket.ticket_user.person_profile_img}}">
-              <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
-              <p>{{ticket.ticket_user.person_email}}</p>
-              <p>{{ticket.ticket_countof}} ширхэг</p>
-            </a>
-            </ion-checkbox>
-    </div>
-    <div class="list card" ng-if="usedTickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
-          Тасалбар алга байна.
-        </div>
-    </ion-content>
+  <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img"  ng-src="{{ticket.ticket_user.person_profile_img}}">
+  <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
+  <p>{{ticket.ticket_user.person_email}}</p>
+  <p>Тасалбар дугаар:{{ticket.ticket_short_id}} </p>
+</a>
+</ion-item>
+</div>
+<div class="list card" ng-if="usedTickets.length == 0" style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
+  Тасалбар байхгүй байна.
+</div>
+</ion-content>
 </ion-view>
