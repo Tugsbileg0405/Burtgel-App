@@ -1,4 +1,3 @@
-
 #eventTitle{
 	font-weight: bold;
 	font-size: 16px;
@@ -25,7 +24,12 @@
 	background-color: red;
 	border: 1px solid red;
 }
-#createEvent input{
+#createEvent label{
+  padding: 0 17px 0 14px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#createEvent input {
   border: 1px solid #d0d4d9;
 }
 .success .popup-buttons .button{
@@ -461,6 +465,15 @@ a:active{
   }
   #mine {
     width: 290px;
+  }
+  #createEvent div.row {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #createEvent div.col input{
+    padding-left: 0 !important;
+    width: 156px;
   }
   #buyticketLabel{
     padding-right: 0px;

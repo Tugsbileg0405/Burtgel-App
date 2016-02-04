@@ -39,7 +39,7 @@ angular.module('starter.services', [])
       return $http.get('http://www.urilga.mn:1337/ticket/'+id+'?____token=dXJpbGdhbW5BY2Nlc3M=');
     },
     getscanTicketByEvent: function(data){
-      return $http.get('http://www.urilga.mn:1337/ticket/?ticket_event='+data+'&____token=dXJpbGdhbW5BY2Nlc3M=');
+      return $http.get('http://www.urilga.mn:1337/ticket?ticket_event='+data+'&____token=dXJpbGdhbW5BY2Nlc3M=');
     },
     checkTicketShortID: function(data){
       return $http.get('http://www.urilga.mn:1337/ticket?ticket_created_by='+data.createdBy+'&ticket_short_id='+data.shortId+'&____token=dXJpbGdhbW5BY2Nlc3M=');
@@ -57,4 +57,5 @@ angular.module('starter.services', [])
       return $http.post('http://www.urilga.mn:1337/tickettype',data);
     }
   }
-});
+})
+;

@@ -1,0 +1,73 @@
+  myData.getscanTicketByEvent($scope.eventId).success(function (res) {
+      if(res.length == 0){
+        $ionicLoading.hide();
+        var alertPopup = $ionicPopup.alert({
+         cssClass :'error',
+         template: 'Тасалбар байхгүй байна.'
+       })
+        alertPopup.then(function(){
+          $scope.closeCheckTicket()
+        });
+      }
+      try {  angular.forEach(res , function(ticket){
+        $scope.ticket = ticket;
+        if ($scope.ticket.id == $scope.ticketid){
+          if(ticket.ticket_isUsed == false){
+            throw $scope.isChecker = 0;
+          }
+          if(ticket.ticket_isUsed == true) {
+            throw $scope.isChecker = 1;
+          }
+        }
+        $scope.isNo = true;
+
+      })
+    }
+    catch(e){
+      console.log(e);
+    }
+    if($scope.isChecker == 0){
+      var data = {};
+      data.ticket_isUsed = true;
+      data.id = $scope.ticket.id;
+      data.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+      myData.scanTicket(data).success(function (res){
+        $ionicLoading.hide();
+        if(res.status == true){
+         var alertPopup = $ionicPopup.alert({
+           cssClass :'success',
+           template: 'Амжилттай бүртгэлээ'
+         })
+         alertPopup.then(function(){
+          $scope.closeCheckTicket()
+        });
+       }
+       else {
+        var alertPopup = $ionicPopup.alert({
+         cssClass :'error',
+         template: res.message
+       })
+        alertPopup.then(function(){
+          $scope.closeCheckTicket()
+        });
+      }
+    })
+    }
+    else if($scope.isChecker == 1){
+     $ionicLoading.hide();
+     var alertPopup = $ionicPopup.alert({
+       cssClass :'error',
+       template: 'Ашиглагдсан тасалбар байна та дахин шалгана уу'
+     });
+   }
+   else if ($scope.isNo == true){
+    $ionicLoading.hide();
+}
+})   
+.error(function (err){
+ $ionicLoading.hide();
+ var alertPopup = $ionicPopup.alert({
+   cssClass :'error',
+   template: 'Та дахин шалгана уу'
+ });
+})

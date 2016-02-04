@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ti-segmented-control','angularMoment','ImgCache','ngResource','angular.filter','ionicProcessSpinner','jett.ionic.filter.bar','ionicLazyLoad','ngMaterial','ionic-material','starter.controllers','starter.services','starter.auth','ngStorage','ngCordova'])
+angular.module('starter', ['ionic','ngResource','ti-segmented-control','angularMoment','ImgCache','ngResource','angular.filter','ionicProcessSpinner','jett.ionic.filter.bar','ionicLazyLoad','ngMaterial','ionic-material','starter.controllers','starter.services','starter.auth','ngStorage','ngCordova'])
 
 .run(function($ionicPlatform,AuthService,ImgCache,$rootScope,$state,$ionicLoading,$ionicPopup) {
  $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromStateParams) {
@@ -130,6 +130,15 @@ if (window.StatusBar) {
     'tab-dash':{
       templateUrl: 'templates/tickets.html',
       controller: 'allticketCtrl'
+    }
+  }
+})
+  .state('tab.checkTicket', {
+  url: '/dash/:eventId/check',
+  views: {
+    'tab-dash':{
+      templateUrl: 'templates/checkTicketByEvent.html',
+      controller: 'checkTicketCtrl'
     }
   }
 })

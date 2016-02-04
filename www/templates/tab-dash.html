@@ -17,11 +17,11 @@
 <ion-refresher
 on-refresh="doRefresh()">
 </ion-refresher>
-  <ion-list show-delete="data.showDelete" style="border-bottom:1px solid #f8f8f8">
-    <ion-item  ng-repeat="event in events| toArray:false | filter: search | orderBy:createdAt:true"  show-delete="shouldShowDelete" class="item item-thumbnail-left" id="myEvent" href="#/tab/dash/{{event.id}}/all">
+  <ion-list show-delete="data.showDelete" >
+    <ion-item  style="border-bottom:1px solid #f8f8f8;padding:0;width:110%" ng-repeat="event in events| toArray:false | filter: search | orderBy:createdAt:true"  show-delete="shouldShowDelete" class="item item-thumbnail-left" id="myEvent" href="#/tab/dash/{{event.id}}/all">
       <img ng-cache ng-src="{{backSite}}/{{event.event_cover}}" ng-if="event.event_cover.length < 50">
       <img ng-cache ng-src="{{event.event_cover}}" ng-if="event.event_cover.length > 50">
-      <h2 id="eventTitle">{{event.event_title}}</h2>
+      <h2 id="eventTitle" >{{event.event_title}}</h2>
       <div class="row" style="padding:0 0 5px 0">
         <div class="col col-10" style="padding:0">
           <p class="eventText"><i class="icon ion-ios-clock-outline"></i></p>

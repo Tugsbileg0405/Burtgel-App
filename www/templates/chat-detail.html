@@ -1,4 +1,4 @@
- <ion-view  >
+ <ion-view  title="{{tickets.length}} ширхэг" >
    <ion-nav-bar class="bar custom-color">
      <ion-nav-buttons side="left">
       <button class="button button-clear" ui-sref="tab.dash" style="color:white">
@@ -6,9 +6,6 @@
         Буцах
       </button>
     </ion-nav-buttons>
-    <ion-nav-title>
-      <h1 class="title" style="color:white" >{{tickets.length}} ширхэг </h1>
-    </ion-nav-title>
       <ion-nav-buttons side="right">
       <button class="button button-clear" ng-click="show($event)" style="color:white" >
        <i class="fa fa-sort-amount-asc"></i>
@@ -29,9 +26,9 @@
               <img  fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img" ng-src="{{ticket.ticket_user.person_profile_img}}">
               <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
               <p>{{ticket.ticket_user.person_email}}</p>
-              <p>Тасалбар дугаар: {{ticket.ticket_short_id}} </p>
+              <p>Тасалбар код: {{ticket.ticket_short_id}} </p>
             </a>
-             <span class="used" ng-if="ticket.ticket_isUsed == true">Ашиглагдсан</span>
+             <span class="used" ng-if="ticket.ticket_isUsed == true">Ашигласан</span>
             </ion-item>
     </div>
     <div class="list card" ng-if="tickets.length == 0"  style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">

@@ -10,20 +10,20 @@
        <div class="list" id="createEvent">
       <label class="item item-input item-stacked-label">
         <span class="input-label">Арга хэмжээний нэр:</span>
-        <input type="text" placeholder="Арга хэмжээний нэр" ng-model="event.event_title">
+        <input type="text"  placeholder="Арга хэмжээний нэр" ng-model="event.event_title">
       </label>
       <label class="item item-input item-stacked-label">
         <span class="input-label">Байршил:</span>
-        <input type="text" placeholder="Байршил" ng-model="event.event_location">
+        <input type="text"  placeholder="Байршил" ng-model="event.event_location">
       </label>
       <div class="row" style="padding-top:0;padding-bottom:0;padding-left:0">
-          <div class="col" style="padding:0">
+          <div class="col" id="left" style="padding:0">
             <label class="item item-input item-stacked-label">
               <span class="input-label">Эхлэх өдөр:</span>
               <input type="date" ng-model="event.event_start_date">
             </label>
           </div>
-          <div class="col" style="padding:0">
+          <div class="col" id="right" style="padding:0">
            <label class="item item-input item-stacked-label">
             <span class="input-label" >Дуусах өдөр:</span>
             <input type="date" ng-model="event.event_end_date">
@@ -31,7 +31,7 @@
           </div>
       </div>
       <label class="item item-input item-stacked-label">
-        <span class="input-label">Эхлэх цаг:</span>
+        <span class="input-label" >Эхлэх цаг:</span>
         <input type="time" ng-model="event.event_start_time">
       </label>
       <div class="item" style="padding-top:0">

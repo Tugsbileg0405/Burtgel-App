@@ -22,7 +22,7 @@ myapp.factory('onlineStatus', ["$window", "$rootScope", function ($window, $root
   return onlineStatus;
 }]);
 
-myapp.controller('DashCtrl', function($scope,$ionicModal,$localStorage,myData,$ionicFilterBar,$rootScope,$timeout,onlineStatus,$ionicPopup,myData,$window,$http,$localStorage,$ionicLoading) {
+myapp.controller('DashCtrl', function($scope,ImgCache,$ionicModal,$localStorage,myData,$ionicFilterBar,$rootScope,$timeout,onlineStatus,$ionicPopup,myData,$window,$http,$localStorage,$ionicLoading) {
  $ionicModal.fromTemplateUrl('templates/addEvent.html', {
   scope: $scope,
   animation: 'slide-in-up'
@@ -47,20 +47,19 @@ $scope.closeModal = function() {
   $scope.$on('modal.removed', function() {
     // Execute action
   });
-    $scope.data = {
+  $scope.data = {
     showDelete: false
   };
   $scope.onItemDelete = function(event) {
     $scope.events.splice($scope.events.indexOf(event), 1);
-     var id = event.id;
-     myData.deleteEvent(id).success(function(res){
-        if(res.state == "OK"){
-          $localStorage.events = $scope.events;
-        }
-     })
+    var id = event.id;
+    myData.deleteEvent(id).success(function(res){
+      if(res.state == "OK"){
+        $localStorage.events = $scope.events;
+      }
+    })
   };
   var person = $localStorage.userdata.user.person;
-
   $scope.event = {};
   $scope.event.event_start_date = new Date();
   $scope.event.event_end_date = new Date();
@@ -124,6 +123,7 @@ $scope.closeModal = function() {
       } 
     })
     .finally(function() {
+      ImgCache.$init();
       $ionicLoading.hide();
       $scope.$broadcast('scroll.refreshComplete');
     })
@@ -263,88 +263,98 @@ $scope.checkTicket = function(data){
 $scope.scan = function(){
   if(onlineStatus.onLine == true){
     $cordovaBarcodeScanner.scan().then(function(barcodeData) {
-     $ionicLoading.show({
-       content: 'Loading'
-     });
-     $scope.ticketid = barcodeData.text;
-     $scope.eventId = $stateParams.eventId;
-     myData.getscanTicketByEvent($scope.eventId).success(function (res) {
-      if(res.length == 0){
+      if(barcodeData.cancelled == true){
         $ionicLoading.hide();
-        var alertPopup = $ionicPopup.alert({
-         cssClass :'error',
-         template: 'Тасалбар байхгүй байна.'
-       })
-        alertPopup.then(function(){
-          $scope.closeCheckTicket()
-        });
       }
-      try {  angular.forEach(res , function(ticket){
-        $scope.ticket = ticket;
-        if ($scope.ticket.id == $scope.ticketid){
-          if(ticket.ticket_isUsed == false){
-            throw $scope.isChecker = 0;
+      else {
+        $ionicLoading.show({
+          content: 'Loading',
+          animation: 'fade-in'
+        });
+        $scope.ticketid = barcodeData.text;
+        $scope.eventId = $stateParams.eventId;
+        myData.getscanTicketByEvent($stateParams.eventId).success(function(res){
+          $scope.eventTickets = res;
+          var keepGoing = true;
+          $scope.checker = 0;
+          if($scope.eventTickets.length == 0){
+            $ionicLoading.hide();
+               var alertPopup = $ionicPopup.alert({
+               cssClass :'error',
+               template: 'Тасалбар байхгүй байна.'
+             })
+              alertPopup.then(function(){
+                $scope.closeCheckTicket()
+              });
           }
-          if(ticket.ticket_isUsed == true) {
-            throw $scope.isChecker = 1;
+          else {
+             angular.forEach($scope.eventTickets,function(ticket){
+            $scope.ticket = ticket;
+            if(keepGoing){
+             if($scope.ticket.id == barcodeData.text){
+              if($scope.ticket.ticket_isUsed == true){
+                console.log('ashiglagdasan');
+                $scope.checker = 1;
+              }
+              else {
+                console.log('ashiglaagui');
+                $scope.checker = 2;
+              }
+              keepGoing = false;
+            }
+          }
+        })
+          if(keepGoing == false){
+            if($scope.checker == 1){
+              $ionicLoading.hide();
+              var alertPopup = $ionicPopup.alert({
+               cssClass :'error',
+               template: 'Ашиглагдсан тасалбар байна та дахин шалгана уу'
+             });
+            }
+            else if ($scope.checker == 2){
+             var data = {};
+             data.ticket_isUsed = true;
+             data.id = $scope.ticket.id;
+             data.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+             myData.scanTicket(data).success(function (res){
+              $ionicLoading.hide();
+              if(res.status == true){
+               var alertPopup = $ionicPopup.alert({
+                 cssClass :'success',
+                 template: 'Амжилттай бүртгэлээ'
+               })
+               alertPopup.then(function(){
+                $scope.closeCheckTicket();
+              });
+             }
+             else {
+              var alertPopup = $ionicPopup.alert({
+               cssClass :'error',
+               template: 'Дахин шалгана уу'
+             })
+              alertPopup.then(function(){
+                $scope.closeCheckTicket();
+              });
+            }
+          })
+           }
+         }
+         else {
+           if(keepGoing == true){
+            $ionicLoading.hide();
+            var alertPopup = $ionicPopup.alert({
+             cssClass :'error',
+             template: 'Тасалбар олдсонгүй та дахин шалгана уу'
+           });
           }
         }
-        $scope.isNo = true;
-
+          }
       })
-    }
-    catch(e){
-      console.log(e);
-    }
-    if($scope.isChecker == 0){
-      var data = {};
-      data.ticket_isUsed = true;
-      data.id = $scope.ticket.id;
-      data.____token = 'dXJpbGdhbW5BY2Nlc3M=';
-      myData.scanTicket(data).success(function (res){
-        $ionicLoading.hide();
-        if(res.status == true){
-         var alertPopup = $ionicPopup.alert({
-           cssClass :'success',
-           template: 'Амжилттай бүртгэлээ'
-         })
-         alertPopup.then(function(){
-          $scope.closeCheckTicket()
-        });
-       }
-       else {
-        var alertPopup = $ionicPopup.alert({
-         cssClass :'error',
-         template: res.message
-       })
-        alertPopup.then(function(){
-          $scope.closeCheckTicket()
-        });
-      }
-    })
-    }
-    else if($scope.isChecker == 1){
-     $ionicLoading.hide();
-     var alertPopup = $ionicPopup.alert({
-       cssClass :'error',
-       template: 'Ашиглагдсан тасалбар байна та дахин шалгана уу'
-     });
-   }
-   else if ($scope.isNo == true){
-    $ionicLoading.hide();
-   //  var alertPopup = $ionicPopup.alert({
-   //   cssClass :'error',
-   //   template: 'Тийм тасалбар алга та дахин шалгана уу'
-   // });
-  }
-})   
-.error(function (err){
- $ionicLoading.hide();
- var alertPopup = $ionicPopup.alert({
-   cssClass :'error',
-   template: 'Та дахин шалгана уу'
- });
-})
+}
+},function(error){
+  console.log(error);
+  $ionicLoading.hide();
 })
 }
 else if(onlineStatus.onLine == false) {
@@ -693,7 +703,7 @@ $scope.checkTicket = function(data){
 })
 
 
-.controller('ticketCtrl', function($scope,$window,$ionicFilterBar,$rootScope,$localStorage,filterFilter,$ionicPopover,$timeout,$ionicLoading,myData,onlineStatus,$ionicHistory,$stateParams,$ionicPopup,$ionicLoading) {
+.controller('ticketCtrl', function($scope,$window,ImgCache,$ionicFilterBar,$rootScope,$localStorage,filterFilter,$ionicPopover,$timeout,$ionicLoading,myData,onlineStatus,$ionicHistory,$stateParams,$ionicPopup,$ionicLoading) {
   $scope.showFilterBar = function () {
     filterBarInstance = $ionicFilterBar.show({
      cancelText: "хаах",
@@ -752,20 +762,20 @@ $scope.checkTicket = function(data){
     }
     $scope.hide();
   }
-  $scope.sortByTicketNumber = function(data){
-    console.log(data.name);
-    delete data.eventType;
-    delete data.date;
-    if(data.name == 'downName'){
-      $scope.sortType = 'ticket_user.person_firstname';
-      $scope.sortReverse = false;
-    }
-    else if (data.name == 'upName'){
-      $scope.sortType = 'ticket_user.person_firstname';
-      $scope.sortReverse = true;
-    }
-    $scope.hide();
-  }
+  // $scope.sortByTicketNumber = function(data){
+  //   console.log(data.name);
+  //   delete data.eventType;
+  //   delete data.date;
+  //   if(data.name == 'downName'){
+  //     $scope.sortType = 'ticket_user.person_firstname';
+  //     $scope.sortReverse = false;
+  //   }
+  //   else if (data.name == 'upName'){
+  //     $scope.sortType = 'ticket_user.person_firstname';
+  //     $scope.sortReverse = true;
+  //   }
+  //   $scope.hide();
+  // }
   $ionicPopover.fromTemplateUrl('templates/filter.html', {
     scope: $scope,
   }).then(function(popover) {
@@ -779,106 +789,89 @@ $scope.checkTicket = function(data){
   };
   $scope.counter = 0;
   $scope.sortTicket = function(data){
-    console.log(data);
-    $scope.ticket_type = {};
-    $scope.ticket_type.freeticket=[];
-    $scope.ticket_type.urilgaticket = [];
-    $scope.ticket_type.paidticket = [];
-    $scope.tickets = $localStorage.tickets;
-    angular.forEach($scope.tickets, function (item){
-      if(item.ticket_type == 'Free'){
-        $scope.ticket_type.freeticket.push(item)
-      }
-      else if (item.ticket_type == 'Paid'){
-        $scope.ticket_type.paidticket.push(item);
-      }
-      else if (item.ticket_type == 'Urilga'){
-        $scope.ticket_type.urilgaticket.push(item);
-      }
-    })
     if(data.eventType == 'Free'){
-      $scope.tickets = $scope.ticket_type.freeticket;
+      $scope.tickets = $localStorage.ticketType.freeTicket;
     }
     else if (data.eventType == 'Paid'){
-      $scope.tickets = $scope.ticket_type.paidticket;
+      $scope.tickets = $localStorage.ticketType.paidTicket;
     }
-    else if (data.eventType == 'Urilga') {
-     $scope.tickets = $scope.ticket_type.urilgaticket;
-   }
-   else if (data.eventType == 'All'){
-    $scope.tickets = $localStorage.tickets;
+    else if (data.eventType == 'Urilga'){
+      $scope.tickets = $localStorage.ticketType.urilgaTicket;
+    }
+    else if (data.eventType == 'All'){
+      $scope.tickets = $localStorage.tickets;
+    }
+    $scope.hide();
   }
-  $scope.hide();
-}
 
-$scope.sortBy = function(data){
- $ionicLoading.show({
-  content: 'Loading'
-});
- console.log(data);
- console.log(data[Object.keys(data)[0 ]]);
- angular.forEach(data, function(value, key) {
-  if(value != ""){
-   console.log(key + ': ' + value);
+//   $scope.sortBy = function(data){
+//    $ionicLoading.show({
+//     content: 'Loading'
+//   });
+//    console.log(data);
+//    console.log(data[Object.keys(data)[0 ]]);
+//    angular.forEach(data, function(value, key) {
+//     if(value != ""){
+//      console.log(key + ': ' + value);
 
-   if(value == 'downName'){
-    delete data.name;
-    delete data.email;
-    delete data.number ;
-    delete data.ticketType;
-    $scope.sortReverse  =  false;
-    $scope.sortType = 'ticket_user.person_firstname';
-  }
-  else if(value == 'upName' ){
-   delete data.name;
-   delete data.email;
-   delete data.number ;
-   delete data.ticketType;
-   $scope.counter = 0;
-   $scope.sortReverse  =  true;
-   $scope.sortType = 'ticket_user.person_firstname';
- }
- else if(value == 'downEmail'){
-   delete data.name;
-   delete data.email;
-   delete data.number ;
-   delete data.ticketType;
-   $scope.counter = 0;
-   $scope.sortReverse  =  false;
-   $scope.sortType = 'ticket_user.person_email';
- }
- else if(value == 'upEmail'){
-  delete data.name;
-  delete data.email;
-  delete data.number ;
-  delete data.ticketType;
-  $scope.counter = 0;
-  $scope.sortReverse  =  true;
-  $scope.sortType = 'ticket_user.person_email';
-}
-else if(value == 'downNumber'){
- delete data.name;
- delete data.email;
- delete data.number ;
- delete data.ticketType;
- $scope.counter = 0;
- $scope.sortType = 'ticket_countof';
- $scope.sortReverse  =  false;
-}
-else if(value== 'upNumber'){
-  delete data.name;
-  delete data.email;
-  delete data.number ;
-  delete data.ticketType;
-  $scope.counter = 0;
-  $scope.sortType = 'ticket_countof';
-  $scope.sortReverse  =  true;
-}
-}
-})
-$scope.hide();
-$ionicLoading.hide();
-}
+//      if(value == 'downName'){
+//       delete data.name;
+//       delete data.email;
+//       delete data.number ;
+//       delete data.ticketType;
+//       $scope.sortReverse  =  false;
+//       $scope.sortType = 'ticket_user.person_firstname';
+//     }
+//     else if(value == 'upName' ){
+//      delete data.name;
+//      delete data.email;
+//      delete data.number ;
+//      delete data.ticketType;
+//      $scope.counter = 0;
+//      $scope.sortReverse  =  true;
+//      $scope.sortType = 'ticket_user.person_firstname';
+//    }
+//    else if(value == 'downEmail'){
+//      delete data.name;
+//      delete data.email;
+//      delete data.number ;
+//      delete data.ticketType;
+//      $scope.counter = 0;
+//      $scope.sortReverse  =  false;
+//      $scope.sortType = 'ticket_user.person_email';
+//    }
+//    else if(value == 'upEmail'){
+//     delete data.name;
+//     delete data.email;
+//     delete data.number ;
+//     delete data.ticketType;
+//     $scope.counter = 0;
+//     $scope.sortReverse  =  true;
+//     $scope.sortType = 'ticket_user.person_email';
+//   }
+//   else if(value == 'downNumber'){
+//    delete data.name;
+//    delete data.email;
+//    delete data.number ;
+//    delete data.ticketType;
+//    $scope.counter = 0;
+//    $scope.sortType = 'ticket_countof';
+//    $scope.sortReverse  =  false;
+//  }
+//  else if(value== 'upNumber'){
+//   delete data.name;
+//   delete data.email;
+//   delete data.number ;
+//   delete data.ticketType;
+//   $scope.counter = 0;
+//   $scope.sortType = 'ticket_countof';
+//   $scope.sortReverse  =  true;
+// }
+// }
+// })
+// $scope.hide();
+// $ionicLoading.hide();
+// }
 $scope.backsite = 'http://www.urilga.mn:1337';
 $scope.doRefresh = function() {
  if(onlineStatus.onLine == true){
@@ -886,11 +879,28 @@ $scope.doRefresh = function() {
      $ionicLoading.hide();
      $scope.tickets = response;
      $localStorage.tickets = $scope.tickets;
+      var ticketType = {};
+      ticketType.freeTicket = [];
+      ticketType.paidTicket = [];
+      ticketType.urilgaTicket = [];
+      angular.forEach($scope.tickets, function(ticket){
+        if(ticket.ticket_type == 'Free'){
+          ticketType.freeTicket.push(ticket);
+        } 
+        else if (ticket.ticket_type == 'Paid'){
+          ticketType.paidTicket.push(ticket);
+        }
+        else if(ticket.ticket_type == 'Urilga'){
+          ticketType.urilgaTicket.push(ticket);
+        }
+      })
+      $localStorage.ticketType = ticketType;
    })
    .finally(function() {
-     $scope.$broadcast('scroll.refreshComplete');
-     $scope.counter = 0;
-   })
+    ImgCache.$init();
+    $scope.$broadcast('scroll.refreshComplete');
+    $scope.counter = 0;
+  })
  }
  else if(onlineStatus.onLine == false) {
   $ionicLoading.hide();
@@ -903,10 +913,17 @@ $scope.doRefresh = function() {
  });
 }
 };
-$scope.$watch('tickets',function(newVal,oldVal){
-  $scope.tickets = newVal;
-  console.log($scope.tickets);
-})
+$scope.onLoad = function(){
+  if($localStorage.tickets){
+    $ionicLoading.hide();
+    $scope.tickets = $localStorage.tickets;
+    $scope.doRefresh();
+  }
+  else {
+    $scope.doRefresh();
+  }
+}
+window.onload= $scope.onLoad();
 $scope.getUsed = function() {
  myData.getTicket($stateParams.eventId).success(function (response){
   $scope.tickets = response;
@@ -920,8 +937,6 @@ $scope.getUsed = function() {
   $scope.used_counter = $scope.used.length;
 })
 };
-
-window.onload= $scope.doRefresh();
 $scope.checkUsed = function(){
   myData.getTicket($stateParams.eventId).success(function (response){
     $scope.usedCounter = [];
@@ -1171,7 +1186,7 @@ else if(onlineStatus.onLine == false) {
 }
 };
 })
-.controller('notusedTicketCtrl', function($scope,$ionicLoading,$cordovaSms,$ionicHistory,$ionicPopup,$state,$ionicModal,myData,onlineStatus,$ionicLoading,$ionicHistory,$localStorage,$stateParams,$state) {
+.controller('notusedTicketCtrl', function($scope,ImgCache,$ionicLoading,$cordovaSms,$ionicHistory,$ionicPopup,$state,$ionicModal,myData,onlineStatus,$ionicLoading,$ionicHistory,$localStorage,$stateParams,$state) {
   var id = $stateParams.eventId;
   $scope.eventid = $stateParams.eventId;
   $scope.backsite = 'http://www.urilga.mn:1337';
@@ -1284,7 +1299,10 @@ else if(onlineStatus.onLine == false) {
 $scope.numbers = [];
 $scope.send = function(data){
   if(data.ticket_phonenumber == ''){
-    alert('Утасны дугаар хоосон байна');
+    var alertPopup = $ionicPopup.alert({
+     cssClass :'error',
+     template: 'Утасны дугаар хоосон байна шалгана уу'
+   });
   }
   else {
     $ionicLoading.show({
@@ -1308,6 +1326,7 @@ $scope.doRefresh = function() {
   if(onlineStatus.onLine == true){
    myData.getTicket($stateParams.eventId).success(function (response){
     $scope.tickets = response;
+    $localStorage.tickets = $scope.tickets;
     $ionicLoading.hide();
     $scope.notused = [];
     $scope.notusedTickets = [];
@@ -1320,8 +1339,9 @@ $scope.doRefresh = function() {
     $scope.not_used_counter = $scope.notused.length;
   })
    .finally(function() {
-     $scope.$broadcast('scroll.refreshComplete');
-   })
+    ImgCache.$init();
+    $scope.$broadcast('scroll.refreshComplete');
+  })
  }
  else if(onlineStatus.onLine == false) {
   $ionicLoading.hide();
@@ -1334,7 +1354,23 @@ $scope.doRefresh = function() {
  });
 }
 };
-window.onload = $scope.doRefresh();
+$scope.onLoad = function(){
+  if($localStorage.tickets){
+    var tickets = $localStorage.tickets;
+    $scope.notusedTickets = [];
+    angular.forEach(tickets,function(ticket){
+      if(ticket.ticket_isUsed == false){
+        $scope.notusedTickets.push(ticket);
+      }
+    })
+    $ionicLoading.hide();
+    $scope.doRefresh();
+  }
+  else {
+    $scope.doRefresh();
+  }
+}
+window.onload = $scope.onLoad();
 })
 .controller('ChatsCtrl', function($scope,$ionicModal,$ionicPopup,$state,$localStorage,onlineStatus,$ionicLoading,$cordovaBarcodeScanner,myData) {
   $ionicModal.fromTemplateUrl('templates/handCheck.html', {
@@ -1392,62 +1428,71 @@ window.onload = $scope.doRefresh();
     }
   })
   }
+  
+
+
   $scope.scan = function(){
     if(onlineStatus.onLine == true){
      $cordovaBarcodeScanner.scan().then(function(barcodeData) {
        $ionicLoading.show({
          content: 'Loading'
        });
+       if(barcodeData.cancelled == true){
+        $ionicLoading.hide();
+      }
+      else {
        $scope.scanData =barcodeData;
        myData.getscanTicket($scope.scanData.text).success(function (ticketInfos){
-        myData.getEvent(person.id).success(function (response){
-          $scope.events = response;
-          try{  angular.forEach($scope.events,function(__event){
-            if(__event.id == ticketInfos.ticket_event.id) {
-             if(ticketInfos.ticket_isUsed == false){
-               throw $scope.ash = 0;
-             }
-             if(ticketInfos.ticket_isUsed == true) {
-              throw $scope.ash = 1;
+        $scope.events = $localStorage.events;
+        $scope.keepGoing = true;
+        angular.forEach($scope.events,function(__event){
+          if($scope.keepGoing){
+            if(__event.id == ticketInfos.ticket_event.id){
+              if(ticketInfos.ticket_isUsed == true){
+                $ionicLoading.hide();
+                console.log('ashiglasan');
+                $scope.isChecked = 2;
+              }
+              else if(ticketInfos.ticket_isUsed == false) {
+                $ionicLoading.hide();
+                var data = {};
+                data.id = $scope.ticketInfo.id;
+                data.ticket_isUsed = true;
+                data.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+                myData.scanTicket(data).success(function (res){
+                  if(res.status == true){
+                    $ionicLoading.hide();
+                    $scope.ticketInfo = res.updated_ticket;
+                    $scope.isChecked = 1;
+                  }
+                  else {
+                    $ionicLoading.hide();
+                    var alertPopup = $ionicPopup.alert({
+                     cssClass :'error',
+                     template: 'Та дахин шалгана уу.'
+                   });
+                  }
+                }).error(function(err){
+                  $ionicLoading.hide();
+                  console.log(err);
+                })
+              }
+              $scope.keepGoing = false;
             }
-          } 
-          $scope.isNo = true;
-          console.log($scope.isNo);
-        });
-        } catch(e){
-         console.log(e);
-       }
-       if($scope.ash == 0) {
-        $scope.isChecked = 1;
-        $scope.ticketInfo = ticketInfos;
-        var data = {};
-        data.id = $scope.ticketInfo.id;
-        data.ticket_isUsed = true;
-        data.____token = 'dXJpbGdhbW5BY2Nlc3M=';
-        myData.scanTicket(data).success(function (res){
-          $ionicLoading.hide();
+          }
         })
-        console.log('ashiglaagui');
-      }
-      else if($scope.ash == 1){
-        $scope.isChecked = 2;
-        console.log('ashiglagdsan');
-        $ionicLoading.hide();
-      }
-      else if ($scope.isNo = true){
-        $scope.isChecked = 4;
-        console.log('bgui');
-        $ionicLoading.hide();
-      }
-    });
-$ionicLoading.hide();
-})
-.error(function (err){
-  $scope.isChecked = 3;
+if($scope.keepGoing == true){
   $ionicLoading.hide();
-  console.log('bgui ee');
+  $scope.isChecked = 3;
+}      
+}).error(function(err,err1,err2){
+  $ionicLoading.hide();
+  $scope.isChecked = 4;
 })
-$ionicLoading.hide();
+      }
+},function(error){
+  console.log(error);
+  $ionicLoading.hide();
 })
 }
 else if(onlineStatus.onLine == false) {
@@ -1459,12 +1504,13 @@ else if(onlineStatus.onLine == false) {
 }
 })
 
-.controller('usedTicketCtrl', function($scope,$ionicLoading,myData,onlineStatus,$ionicPopup,$ionicLoading,$ionicHistory,$localStorage,$stateParams,$state) {
+.controller('usedTicketCtrl', function($scope,ImgCache,$ionicLoading,myData,onlineStatus,$ionicPopup,$ionicLoading,$ionicHistory,$localStorage,$stateParams,$state) {
   $scope.backsite = 'http://www.urilga.mn:1337';
   $scope.doRefresh = function() {
     if(onlineStatus.onLine == true){
      myData.getTicket($stateParams.eventId).success(function (response){
       $scope.tickets = response;
+      $localStorage.tickets = $scope.tickets;
       $ionicLoading.hide();
       $scope.used = [];
       $scope.usedTickets = [];
@@ -1477,6 +1523,7 @@ else if(onlineStatus.onLine == false) {
       $scope.used_counter = $scope.used.length;
     })
      .finally(function() {
+       ImgCache.$init();
        $scope.$broadcast('scroll.refreshComplete');
      })
    }
@@ -1491,7 +1538,23 @@ else if(onlineStatus.onLine == false) {
      });
    }
  };
- window.onload = $scope.doRefresh();
+ $scope.onLoad = function(){
+  if($localStorage.tickets){
+    var tickets = $localStorage.tickets;
+    $scope.usedTickets = [];
+    angular.forEach(tickets, function(ticket){
+      if(ticket.ticket_isUsed == true){
+        $scope.usedTickets.push(ticket);
+      }
+    })
+    $ionicLoading.hide();
+    $scope.doRefresh();
+  }
+  else {
+    $scope.doRefresh();
+  }
+}
+window.onload = $scope.onLoad();
 })
 
 .controller('AccountCtrl', function($scope,$window,$cordovaCamera,myData,$localStorage,$state,$ionicPopover) {
@@ -1714,5 +1777,171 @@ $scope.changepass = function(data){
   $ionicHistory.goBack();
 };
 $scope.events = $localStorage.events;
+})
+.controller('checkTicketCtrl',function($scope,onlineStatus,$stateParams,myData,$ionicModal,$cordovaBarcodeScanner,$localStorage,$state,$ionicLoading,$ionicHistory,$ionicPopup){
+  var person = $localStorage.userdata.user.person;
+  $scope.goBack = function(){
+    $state.go('tab.ticket',{eventId:$stateParams.eventId})
+  }
+  $ionicModal.fromTemplateUrl('templates/handCheck.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(handmodal) {
+    $scope.hmodal = handmodal;
+  });
+  $scope.openHandcheck = function() {
+    $scope.hmodal.show();
+  };
+  $scope.closeModal = function() {
+    $scope.hmodal.hide();
+  };
+  $scope.checkTicket = function(data){
+    var ticketdata = {};
+    ticketdata.shortId = data.shortCode;
+    ticketdata.createdBy = person.id;
+    ticketdata.eventID= $stateParams.eventId;
+    myData.checkTicketShortIDbyEvent(ticketdata).success(function (result){
+      if(result[0]){
+        if(result[0].ticket_isUsed == true){
+          var alertPopup = $ionicPopup.alert({
+           cssClass :'error',
+           template: 'Ашиглагдсан тасалбар байна.'
+         });
+        }
+        else {
+         $ionicLoading.show({
+           content: 'Loading'
+         });
+         var updatedata ={};
+         updatedata.id = result[0].id;
+         updatedata.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+         updatedata.ticket_isUsed = true;
+         myData.scanTicket(updatedata).success(function (result){
+          $ionicLoading.hide();
+          var alertPopup = $ionicPopup.alert({
+            cssClass :'success',
+            template: 'Амжилттай бүртгэлээ.'
+          })
+          alertPopup.then(function(){
+            $scope.closeModal();
+          })
+        })
+       }
+     }
+     else {
+      var alertPopup = $ionicPopup.alert({
+       cssClass :'error',
+       template: 'Буруу код оруулсан байна.'
+     })
+    }
+  })
+  }
+  $scope.counter = 0;
+  $scope.scan = function(){
+    if(onlineStatus.onLine == true){
+      $cordovaBarcodeScanner.scan().then(function(barcodeData) {
+        if(barcodeData.cancelled == true){
+          $ionicLoading.hide();
+        }
+        else {
+          $ionicLoading.show({
+            content: 'Loading',
+            animation: 'fade-in'
+          });
+          $scope.ticketid = barcodeData.text;
+          $scope.eventId = $stateParams.eventId;
+          myData.getscanTicketByEvent($scope.eventId).success(function (res) {
+            if(res.length == 0){
+              $ionicLoading.hide();
+              $scope.counter = 1;
+             //  var alertPopup = $ionicPopup.alert({
+             //   cssClass :'error',
+             //   template: 'Тасалбар байхгүй байна.'
+             // })
+             //  alertPopup.then(function(){
+             //    $scope.closeCheckTicket()
+             //  });
+}
+else {
+ try {  angular.forEach(res , function(ticket){
+  $scope.ticket = ticket;
+  if ($scope.ticket.id == $scope.ticketid){
+    if(ticket.ticket_isUsed == false){
+      throw $scope.isChecker = 0;
+    }
+    if(ticket.ticket_isUsed == true) {
+      throw $scope.isChecker = 1;
+    }
+  }
+  $scope.isNo = true;
+
+})
+}
+catch(e){
+  console.log(e);
+}
+if($scope.isChecker == 0){
+  var data = {};
+  data.ticket_isUsed = true;
+  data.id = $scope.ticket.id;
+  data.____token = 'dXJpbGdhbW5BY2Nlc3M=';
+  myData.scanTicket(data).success(function (res){
+    $ionicLoading.hide();
+    if(res.status == true){
+      $scope.ticketInfo = $scope.ticket;
+      $scope.counter = 2;
+              //  var alertPopup = $ionicPopup.alert({
+              //    cssClass :'success',
+              //    template: 'Амжилттай бүртгэлээ'
+              //  })
+              //  alertPopup.then(function(){
+              //   $scope.transitionTo('tab.ticket',{eventId:$stateParams.eventId},{reload:true});
+              // });
+}
+else {
+ $scope.counter = 3;
+ $ionicLoading.hide();
+}
+})
+}
+else if($scope.isChecker == 1){
+ $ionicLoading.hide();
+ $scope.counter = 4;
+           // var alertPopup = $ionicPopup.alert({
+           //   cssClass :'error',
+           //   template: 'Ашиглагдсан тасалбар байна та дахин шалгана уу'
+           // });
+}
+else if ($scope.isNo == true){
+  $ionicLoading.hide();
+  $scope.counter =5;
+         //  var alertPopup = $ionicPopup.alert({
+         //   cssClass :'error',
+         //   template: 'Тасалбар олдсонгүй та дахин шалгана уу'
+         // });
+}
+}
+})   
+.error(function (err){
+ $ionicLoading.hide();
+ $scope.counter = 6;
+ // var alertPopup = $ionicPopup.alert({
+ //   cssClass :'error',
+ //   template: 'Та дахин шалгана уу'
+ // });
+})
+}
+},function(error){
+  console.log(error);
+  $ionicLoading.hide();
+})
+}
+else if(onlineStatus.onLine == false) {
+  var alertPopup = $ionicPopup.alert({
+   cssClass :'error',
+   template: 'Интернет холболтоо шалгана уу'
+ });
+}
+}
 })
 ;

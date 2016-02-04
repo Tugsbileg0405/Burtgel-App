@@ -10,7 +10,7 @@
               <img fallback-src="{{backsite}}/{{ticket.ticket_user.person_profile_img}}" ng-if="ticket.ticket_user.person_profile_img" ng-src="{{ticket.ticket_user.person_profile_img}}">
               <h2>{{ticket.ticket_user.person_firstname}} {{ticket.ticket_user.person_lastname}}</h2>
               <p>{{ticket.ticket_user.person_email}}</p>
-              <p>Тасалбар дугаар:{{ticket.ticket_short_id}} </p>
+              <p>Тасалбар код:{{ticket.ticket_short_id}} </p>
               <p></p>
             </a>
             </ion-item>
@@ -20,10 +20,10 @@
         </div>
 
     </ion-content>
-<!-- <ion-footer-bar align-title="left" style="border:1px solid #f8f8f8" class="bar bar-subfooter" ng-click="openModal()">
-  <h1 class="title" style="color:#289BB8">Мессеж илгээх</h1>
+<ion-footer-bar align-title="left" style="border:1px solid #f8f8f8" class="bar bar-subfooter" ng-click="openModal()">
+  <h1 class="title" style="font-family:'Arial';color:#289BB8">Мессеж илгээх</h1>
   <div class="buttons" ng-click="openModal()">
-    <button class="button" style="height:90%;border:1px solid #289BB8;color:#289BB8;padding-left:15px;padding-right:15px"><i class="icon ion-iphone"></i></button>
+    <button class="button" style="height:15px;border:1px solid #289BB8;color:#289BB8;padding-left:15px;padding-right:15px"><i class="icon ion-iphone"></i></button>
   </div>
-</ion-footer-bar> -->
+</ion-footer-bar>
 </ion-view>

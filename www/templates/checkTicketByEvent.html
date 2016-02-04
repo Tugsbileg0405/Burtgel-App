@@ -1,0 +1,102 @@
+<ion-view view-title="Тасалбар шалгах"  cache-view="false">
+<ion-nav-bar class="bar custom-color" >
+<ion-nav-buttons side="left">
+<button class="button button-clear" ng-click="goBack()" style="color:white">
+  <i class="icon ion-ios-arrow-back" style="padding:0 5px 0 5px"></i>
+  Буцах
+</button>
+</ion-nav-buttons>
+<ion-nav-buttons side="right">
+<button class="button button-clear" ng-click="scan()">
+  <i class="icon ion-ios-camera-outline" style="padding:0 5px 0 5px;color:white"></i>
+</button>
+</ion-nav-buttons>
+</ion-nav-bar>
+<ion-content>
+
+<div  class="item item-text-wrap"  ng-if="counter == 0" style="font-size:15px;text-align:center;margin-top:100px;border:none" >
+ <p style="font-size:16px" id="scanData">  Та дээр байрлах &nbsp <i class="icon ion-ios-camera-outline"></i>&nbsp товчин дээр дарж тасалбараа уншуулна уу.</p><br>
+ <p style="font-size:16px; text-transform: uppercase;font-weight:bold" id="scanData"> Таны тасалбарын мэдээлэл энэд гарч ирэх болно.</p>
+ <button class="button button-block" style="background-color:#289bb8;color:white;border:1px solid #289bb8;padding:0" ng-click="scan()">
+  Камераар шалгах
+</button>
+<button class="button button-block" style="background-color:#21D268;color:white;border:1px solid #21D268;padding:0" ng-click="openHandcheck()">
+  Гараар шалгах
+</button>
+</div>
+<div class="card" style="margin-top:100px"  ng-if="counter == 4" >
+  <div  class="item item-text-wrap"  style="font-size:15px;text-align:center">
+   <p  id="info">Ашиглагдсан тасалбар байна. Та дахин шалгана уу.</p>
+   <button class="button button-block" style="background-color:#289bb8;color:white;border:1px solid #289bb8" ng-click="scan()">
+    Тасалбар шалгах
+  </button>
+</div>
+</div>
+<div class="card"  style="margin-top:100px" ng-if="counter == 5">
+  <div  class="item item-text-wrap"  style="font-size:15px;text-align:center" >
+   <p   id="info">Тасалбар олдсонгүй. Та дахин шалгана уу.</p>
+   <button class="button button-block" style="background-color:#289bb8;color:white;border:1px solid #289bb8" ng-click="scan()">
+    Тасалбар шалгах
+  </button>
+</div>
+</div>
+<div class="card"  style="margin-top:100px" ng-if="counter == 6">
+  <div  class="item item-text-wrap"  style="font-size:15px;text-align:center" >
+   <p   id="info">Тасалбар олдсонгүй. Та дахин шалгана уу.</p>
+   <button class="button button-block" style="background-color:#289bb8;color:white;border:1px solid #289bb8" ng-click="scan()">
+    Тасалбар шалгах
+  </button>
+</div>
+</div>
+<div class="card"  style="margin-top:100px" ng-if="counter == 1">
+  <div  class="item item-text-wrap"  style="font-size:15px;text-align:center" >
+   <p   id="info">Тасалбар байхгүй байна.</p>
+ </div>
+</div>
+<div class="card"  style="margin-top:100px" ng-if="counter == 3">
+  <div  class="item item-text-wrap"  style="font-size:15px;text-align:center" >
+   <p  id="info">Амжилтгүй. Та дахин шалгана уу.</p>
+   <button class="button button-block" style="background-color:#289bb8;color:white;border:1px solid #289bb8" ng-click="scan()">
+    Тасалбар шалгах
+  </button>
+</div>
+</div>
+<div class="card"  style="margin-top:100px" ng-if="isChecked == 4">
+  <div  class="item item-text-wrap"  style="font-size:15px;text-align:center" >
+   <p  id="info">Тасалбар олдсонгүй. Та дахин шалгана уу.</p>
+   <button class="button button-block" style="background-color:#289bb8;color:white;border:1px solid #289bb8" ng-click="scan()">
+    Тасалбар шалгах
+  </button>
+</div>
+</div>
+<div class="card" ng-if="counter == 2" style="margin-top:25px" >
+  <div class="item" id="ticketInfo" >
+    <h2>Амжилттай бүртгэлээ</h2>
+    <label class="item item-input field-disabled" ng-if="ticketInfo.ticket_email">
+      <span class="input-label">И-мэйл:</span>
+      <input type="text" style="font-weight:bold" ng-model="ticketInfo.ticket_email"  disabled>
+    </label>
+    <label class="item item-input field-disabled" ng-if="ticketInfo.ticket_phonenumber">
+      <span class="input-label">Утас:</span>
+      <input type="text" style="font-weight:bold" ng-model="ticketInfo.ticket_phonenumber"  disabled>
+    </label>
+    <label class="item item-input field-disabled" ng-if="ticketInfo.ticket_fullname">
+      <span class="input-label">Нэр:</span>
+      <input type="text" style="font-weight:bold" ng-model="ticketInfo.ticket_fullname"  disabled>
+    </label>
+    <label class="item item-input field-disabled" ng-if="ticketInfo.ticket_type">
+      <span class="input-label">Тасалбарын төрөл:</span>
+      <input type="text" style="font-weight:bold" ng-model="ticketInfo.ticket_type"  disabled>
+    </label>
+    <label class="item item-input field-disabled" ng-if="ticketInfo.ticket_price">
+      <span class="input-label">Тасалбарын үнэ:</span>
+      <input type="text" style="font-weight:bold" ng-model="ticketInfo.ticket_price"  disabled>
+    </label>
+    <label class="item item-input field-disabled" ng-if="ticketInfo.ticket_event.event_title">
+      <span class="input-label">Арга хэмжээ нэр:</span>
+      <input type="text" style="font-weight:bold" ng-model="ticketInfo.ticket_event.event_title"  disabled>
+    </label>
+  </div>
+</div>
+</ion-content>
+</ion-view>
