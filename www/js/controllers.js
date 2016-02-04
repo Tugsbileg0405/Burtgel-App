@@ -1309,17 +1309,22 @@ $scope.send = function(data){
       content: 'Loading',
       animation: 'fade-in'
     });
-    angular.forEach($scope.uniqueNumber,function (item){
-     $cordovaSms
-     .send(item, data.text)
-     .then(function() {
+    $cordovaSms.send($scope.uniqueNumber,data.text).then(function(){
       $ionicLoading.hide();
       console.log('amjilttai');
-    }, function(error) {
+    },function(error){
       $ionicLoading.hide();
-      alert(error);
-    });
-   })
+    })
+   //  angular.forEach($scope.uniqueNumber,function (item){
+   //   $cordovaSms
+   //   .send(item, data.text)
+   //   .then(function() {
+   //    $ionicLoading.hide();
+   //    console.log('amjilttai');
+   //  }, function(error) {
+   //    $ionicLoading.hide();
+   //  });
+   // })
   }
 }
 $scope.doRefresh = function() {
@@ -1453,8 +1458,10 @@ window.onload = $scope.onLoad();
                 console.log('ashiglasan');
                 $scope.isChecked = 2;
               }
-              else if(ticketInfos.ticket_isUsed == false) {
+              else  {
                 $ionicLoading.hide();
+                $scope.ticketInfo = ticketInfos;
+                $scope.isChecked = 1;
                 var data = {};
                 data.id = $scope.ticketInfo.id;
                 data.ticket_isUsed = true;
@@ -1462,8 +1469,8 @@ window.onload = $scope.onLoad();
                 myData.scanTicket(data).success(function (res){
                   if(res.status == true){
                     $ionicLoading.hide();
-                    $scope.ticketInfo = res.updated_ticket;
-                    $scope.isChecked = 1;
+                    // $scope.ticketInfo = res.updated_ticket;
+                    // $scope.isChecked = 1;
                   }
                   else {
                     $ionicLoading.hide();
