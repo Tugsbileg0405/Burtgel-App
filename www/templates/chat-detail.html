@@ -28,7 +28,12 @@
               <p>{{ticket.ticket_user.person_email}}</p>
               <p>Тасалбар код: {{ticket.ticket_short_id}} </p>
             </a>
-             <span class="used" ng-if="ticket.ticket_isUsed == true">Ашигласан</span>
+            <div class="box-tri" ng-if="ticket.ticket_isUsed == true">
+             <span >Used</span>
+             </div>
+              <div class="box-tri-1" ng-if="ticket.ticket_isUsed != true">
+             <span >New</span>
+             </div>
             </ion-item>
     </div>
     <div class="list card" ng-if="tickets.length == 0"  style="text-align:center;padding-top:10px;padding-bottom:10px;margin-top:5px">
